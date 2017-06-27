@@ -8,21 +8,12 @@
             [clj-time.core :as t]))
 
 (defn extract-query-and-time
-  "Uses a regular expression to extract the
-  fourth and the sixth value from a string
-  containing comma-separated values
-  assuming a semicolon is the separator
-  and returns a vector with these 2 values"
   [line]
   (let [[_ fourth sixth]
         (re-matches #"(?:[^;]+;){3}([^;]+);[^;]+;([^;]+).*" line)]
     {:key fourth :datestr sixth}))
 
 (defn make-time-query-tuple
-  "takes a vector of two strings, parses the second as a date
-  and returns a Spark tuple with the first string as a key,
-  and the number of milliseconds since the year 2000 of the
-  date parsed from the second string as a value"
   [dk]
   (let [{datestr :datestr key :key} dk]
   ;(ft/tuple key (msec-since-2000 datestr)))
@@ -37,13 +28,13 @@
 
      (s/lower-case (s/trim (s/replace (s/replace key #"\s+" " ") #"[^\w ]" ""))))))
 
-(defn sq [x] (* x x))
+(f/defsparkfn sq [x] (* x x))
 
-(defn accumulate-slope-fraction
+(f/defsparkfn accumulate-slope-fraction
   [acc tuple2_total_timestamp]
-  (if (not :n acc)
-    (let [totalDataPoints (first (ft/untuple tuple2_total_timestamp))
-          firstTimestamp (second (ft/untuple tuple2_total_timestamp))]
+  (if (not (:n acc))
+    (let [totalDataPoints (first (f/untuple tuple2_total_timestamp))
+          firstTimestamp (second (f/untuple tuple2_total_timestamp))]
       { :n 1
         :meanX (/ totalDataPoints 2)
         :meanY 0
@@ -51,7 +42,7 @@
         :NumeratorB 0
         :DenominatorB 0})
 
-    (let [currentTimestamp (second (ft/untuple tuple2_total_timestamp))
+    (let [currentTimestamp (second (f/untuple tuple2_total_timestamp))
           n (+ 1 (:n acc))
           cX_ (:meanX acc) ; X = n, dx = 1 (constant), so meanX = count/2 (constant so use or to evaluate once)
           oldY_ (:meanY acc)
@@ -78,9 +69,7 @@
       (conf/master "local[*]")
       (conf/app-name "skct")))
 
-(defn -main
-  []
-
+(defn -main []
   (f/with-context sc c
     (let
       [date-query-ordered
@@ -101,26 +90,9 @@
             (f/cache))    ; (query, (totalQueryCount, date))
        query-slope
         (-> distinct-queries-and-dates
-            (f/fold nil accumulate-slope-fraction)
-            (f/map-to-pair (f/fn [key_acc] (ft/tuple (first (f/untuple key_acc)) (let [acc (second (f/untuple key_acc))] (/ (:NumeratorB acc) (:DenominatorB acc)))))))]
+            (f/fold nil accumulate-slope-fraction))]
+            ;(f/map-to-pair (f/fn [key_acc] (ft/tuple (first (f/untuple key_acc)) (let [acc (second (f/untuple key_acc))] (/ (:NumeratorB acc) (:DenominatorB acc)))))))]
       (-> query-slope
           (f/take-ordered 40)
           f/collect
           clojure.pprint/pprint))))
-       ;queries-with-ordered-dates
-        ;(-> distinct-queries
-        ;    (f/left-outer-join))])))
-        ;(f/map-partitions-with-index
-        ; (f/iterator-fn [index coll]
-         ;  (-> coll
-         ;      (f/map-to-pair (f/fn [line] (ft/tuple line 1)))
-          ;     (f/collect))
-          ;(if (= index 0)
-           ;[]
-           ;[iter]))
-           ;((->
-             ;(f/map-to-pair (f/fn [line] (first-and-1 (make-query-time-tuple (extract-fourth-and-sixth-csv line)))))
-        ;(f/reduce-by-key (f/fn [counta countb] (+ counta countb)))
-        ;(f/filter (f/fn [count] (> count 0)))
-        ;f/sort-by-key
-             ;f/count)
