@@ -9,16 +9,16 @@
             [clj-time.coerce :as tc]))
 
 (f/defsparkfn fourth-and-sixth-csv
-  "takes the fourth and sixth string from a string, split by semicolon"
   [line]
+  "takes the fourth and sixth string from a string, split by semicolon"
   (let [[_ fourth sixth]
         (re-matches #"(?:[^;]+;){3}([^;]+);[^;]+;([^;]+).*" line)]
     [fourth
      sixth]))
 
 (f/defsparkfn normalize-query-str
-  "minimizes spacing and converts to lower case"
   [querystr]
+  "minimizes spacing and converts to lower case"
   (s/lower-case
     (s/trim
       (s/replace (s/replace querystr
@@ -28,8 +28,8 @@
                  ""))))
 
 (f/defsparkfn parse-time-str-mb-long
-  "returns a date parsed from input string, in milliseconds, or nil"
   [datestr]
+  "returns a date parsed from input string, in milliseconds, or nil"
   (tc/to-long
    (try (dt/parse (dt/formatter :date-hour-minute-second-ms) datestr)
      (catch Exception e
@@ -39,8 +39,8 @@
              (catch Exception e nil))))))))
 
 (f/defsparkfn line-to-time-query-tuple2
-  "returns a Spark tuple of the normalized query string and date time in msec from a csv record"
   [line]
+  "returns a Spark tuple of the normalized query string and date time in msec from a csv record"
   (let [[fourth sixth] (fourth-and-sixth-csv line)]
     (ft/tuple
       (parse-time-str-mb-long sixth)
@@ -48,7 +48,7 @@
 
 (f/defsparkfn flip-tuple
   [tuple2]
-  (let [kv (f/untuple tuple)
+  (let [kv (f/untuple tuple2)
         k (first kv)
         v (second kv)]
     (ft/tuple v k)))
@@ -80,7 +80,7 @@
             newY_ (+ (* oldY_ (/ (- n 1) n)) (/ newY n))
             oldNumerator (:NumeratorB acc)
             oldDenominator (:DenominatorB acc)
-            newDenominator (+ oldDenominator (sq (- newX cX_)))
+            newDenominator (+ oldDenominator (squared (- newX cX_)))
             newNumerator (+ oldNumerator
                              (* (- oldX cX_) (- oldY_ newY_))
                              (* (- newX cX_) (- newY newY_)))]
@@ -103,7 +103,7 @@
       [date-query-ordered
         (-> (f/text-file sc "resources/kaggle_geo - Erik .csv")
             (f/map-to-pair line-to-time-query-tuple2) ; (query date, query)
-            (f/filter (ft/key-val-fn [timestamp query] timestamp)) ; filter out nil timestamp
+            (f/filter (ft/key-val-fn (f/fn [timestamp query] timestamp))) ; filter out nil timestamp
             f/sort-by-key ; (query date sorted, query)
             f/cache)
        counted-queries
@@ -121,7 +121,7 @@
        query-slope
         (-> distinct-queries-and-dates
             (f/fold nil accumulate-slope-fraction)
-            (f/map-to-pair (ft/key-val-fn [key acc] (ft/tuple key (/ (:NumeratorB acc) (:DenominatorB acc))))))]
+            (f/map-to-pair (ft/key-val-fn (f/fn [key acc] (ft/tuple key (/ (:NumeratorB acc) (:DenominatorB acc)))))))]
 
       (-> query-slope
           (f/take-ordered 40)
