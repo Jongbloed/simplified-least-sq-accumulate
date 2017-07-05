@@ -63,6 +63,43 @@
   "divides by one over two years in milliseconds if divisor is zero"
   (/ dividend (if (= 0 divisor) smallenough divisor)))
 
+(f/defsparkfn create-combiner
+  [timestamp_count_tuple2]
+  (let [[firstTimestamp totalDataPoints] (f/untuple timestamp_count_tuple2)]
+    { :n 1
+      :meanX (/ totalDataPoints 2)
+      :meanY 0
+      :timestamp firstTimestamp
+      :NumeratorB 0
+      :DenominatorB 0}))
+
+(f/defsparkfn combine-value
+  [acc timestamp_count_tuple2]
+  (let [[currentTimestamp _] (f/untuple timestamp_count_tuple2)
+        n (+ 1 (:n acc))
+        cX_ (:meanX acc) ; X = n, dx = 1 (constant), so meanX = count/2 (constant so use or to evaluate once)
+        oldY_ (:meanY acc)
+        oldX (:n acc)
+        newX (+ oldX 1)
+        newY (safediv 1 (- currentTimestamp (:timestamp acc))) ;Y = 1 / timespan between hits
+        newY_ (+ (* oldY_ (safediv (- n 1) n)) (safediv newY n))
+        oldNumerator (:NumeratorB acc)
+        oldDenominator (:DenominatorB acc)
+        newDenominator (+ oldDenominator (squared (- newX cX_)))
+        newNumerator (+ oldNumerator
+                         (* (- oldX cX_) (- oldY_ newY_))
+                         (* (- newX cX_) (- newY newY_)))]
+    { :n n
+      :meanX cX_
+      :meanY newY_
+      :timestamp currentTimestamp
+      :NumeratorB newNumerator
+      :DenominatorB newDenominator}))
+
+(f/defsparkfn merge-combiners
+  [acc1 acc2]
+  (safediv (+ (:NumeratorB acc1) (:NumeratorB acc2)) (+ (:DenominatorB acc1) (:DenominatorB acc2))))
+
 (f/defsparkfn accumulate-slope-fraction
   [acc kvv_query_timestamp_count]
   (let [k_tuple2 (f/untuple kvv_query_timestamp_count)]
@@ -113,8 +150,7 @@
             (f/map-to-pair line-to-time-query-tuple2) ; (query date, query)
             (f/filter (ft/key-val-fn (f/fn [timestamp query] timestamp))) ; filter out nil timestamp
             f/sort-by-key ; (query date sorted, query)
-            f/cache
-            (f/save-as-text-file "spark_textfiles/date-query-ordered.txt"))
+            f/cache)
 
        counted-queries
         (-> date-query-ordered
@@ -122,23 +158,26 @@
             (f/map-to-pair (f/fn [key] (ft/tuple key 1))) ;(query, 1)
             (f/reduce-by-key (f/fn [_ __] (+ _ __))) ;(query, count)
             (f/filter (f/fn [tuple] (> (second (f/untuple tuple)) 2))) ;eliminate queries with too few data points
-            f/cache
-            (f/save-as-text-file "spark_textfiles/counted-queries.txt"))
+            f/cache)
              ;(query, count) where count >=3
        distinct-queries-and-dates
         (-> date-query-ordered ; (timestamp, query) ordered by timestamp
             (f/map-to-pair flip-tuple) ; (query, timestamp) ordered by timestamp
             (f/join counted-queries); join distinct queries with enough data points (query, count) to
             (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
-            f/cache
-            (f/save-as-text-file "spark_textfiles/distinct-queries-and-dates.txt"))
+            f/cache)
                 ; (query, (timestamp, count))
        query-slope
         (-> distinct-queries-and-dates
-            (f/aggregate nil accumulate-slope-fraction (f/fn [acc1 acc2] acc1));(safediv (+ (:NumeratorB acc1) (:NumeratorB acc2)) (+ (:DenominatorB acc1) (:DenominatorB acc2))))]
-            f/cache
-            (f/save-as-text-file "spark_textfiles/query-slope.txt"))]
+            (f/combine-by-key create-combiner combine-value (f/fn [c1 c2] c1));(safediv (+ (:NumeratorB acc1) (:NumeratorB acc2)) (+ (:DenominatorB acc1) (:DenominatorB acc2))))]
+            f/cache)]
             ;(f/map-to-pair (ft/key-val-fn (f/fn [key acc] (ft/tuple key (safediv (:NumeratorB acc) (:DenominatorB acc)))))))]
+
+      (f/save-as-text-file date-query-ordered "spark_textfiles/date-query-ordered")
+      (f/save-as-text-file counted-queries "spark_textfiles/counted-queries")
+      (f/save-as-text-file distinct-queries-and-dates "spark_textfiles/distinct-queries-and-dates")
+      (println "got to query-slope!!!\n\n")
+      (f/save-as-text-file query-slope "spark_textfiles/query-slope")
 
       (-> query-slope
           (f/take 40)
