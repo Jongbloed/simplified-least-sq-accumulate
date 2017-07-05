@@ -55,6 +55,14 @@
 
 (f/defsparkfn squared [x] (* x x))
 
+(def two_yrs_in_msec 61516800000)
+(def smallenough (/ 1 two_yrs_in_msec))
+
+(f/defsparkfn safediv
+  [dividend divisor]
+  "divides by one over two years in milliseconds if divisor is zero"
+  (/ dividend (if (= 0 divisor) smallenough divisor)))
+
 (f/defsparkfn accumulate-slope-fraction
   [acc kvv_query_timestamp_count]
   (let [k_tuple2 (f/untuple kvv_query_timestamp_count)]
@@ -76,8 +84,8 @@
             oldY_ (:meanY acc)
             oldX (:n acc)
             newX (+ oldX 1)
-            newY (/ 1 (- currentTimestamp (:timestamp acc))) ;Y = 1 / timespan between hits
-            newY_ (+ (* oldY_ (/ (- n 1) n)) (/ newY n))
+            newY (safediv 1 (- currentTimestamp (:timestamp acc))) ;Y = 1 / timespan between hits
+            newY_ (+ (* oldY_ (safediv (- n 1) n)) (safediv newY n))
             oldNumerator (:NumeratorB acc)
             oldDenominator (:DenominatorB acc)
             newDenominator (+ oldDenominator (squared (- newX cX_)))
@@ -105,25 +113,34 @@
             (f/map-to-pair line-to-time-query-tuple2) ; (query date, query)
             (f/filter (ft/key-val-fn (f/fn [timestamp query] timestamp))) ; filter out nil timestamp
             f/sort-by-key ; (query date sorted, query)
-            f/cache)
+            f/cache
+            (f/save-as-text-file "spark_textfiles/date-query-ordered.txt"))
+
        counted-queries
         (-> date-query-ordered
             f/values ;(query)
             (f/map-to-pair (f/fn [key] (ft/tuple key 1))) ;(query, 1)
             (f/reduce-by-key (f/fn [_ __] (+ _ __))) ;(query, count)
             (f/filter (f/fn [tuple] (> (second (f/untuple tuple)) 2))) ;eliminate queries with too few data points
-            f/cache) ;(query, count) where count >=3
+            f/cache
+            (f/save-as-text-file "spark_textfiles/counted-queries.txt"))
+             ;(query, count) where count >=3
        distinct-queries-and-dates
         (-> date-query-ordered ; (timestamp, query) ordered by timestamp
             (f/map-to-pair flip-tuple) ; (query, timestamp) ordered by timestamp
             (f/join counted-queries); join distinct queries with enough data points (query, count) to
-            f/cache)    ; (query, (timestamp, count))
+            (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
+            f/cache
+            (f/save-as-text-file "spark_textfiles/distinct-queries-and-dates.txt"))
+                ; (query, (timestamp, count))
        query-slope
         (-> distinct-queries-and-dates
-            (f/fold nil accumulate-slope-fraction)
-            (f/map-to-pair (ft/key-val-fn (f/fn [key acc] (ft/tuple key (/ (:NumeratorB acc) (:DenominatorB acc)))))))]
+            (f/aggregate nil accumulate-slope-fraction (f/fn [acc1 acc2] acc1));(safediv (+ (:NumeratorB acc1) (:NumeratorB acc2)) (+ (:DenominatorB acc1) (:DenominatorB acc2))))]
+            f/cache
+            (f/save-as-text-file "spark_textfiles/query-slope.txt"))]
+            ;(f/map-to-pair (ft/key-val-fn (f/fn [key acc] (ft/tuple key (safediv (:NumeratorB acc) (:DenominatorB acc)))))))]
 
       (-> query-slope
-          (f/take-ordered 40)
+          (f/take 40)
           f/collect
           clojure.pprint/pprint))))
