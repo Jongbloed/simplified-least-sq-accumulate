@@ -1,0 +1,86 @@
+Top 10 fastest growing searches:
+Search string: [computer headsets]
+                ddt/dx in Milliseconds over N: [-2.63338083E8]
+  Explanation: Every time someone searches for "computer headsets", it will statistically take less for the next person to search for it
+
+Search string: [uninterruptible power supply]
+                ddt/dx in Milliseconds over N: [-2.63314502E8]
+  Explanation: Every time someone searches for "uninterruptible power supply", it will statistically take less for the next person to search for it
+
+Search string: [lucha libre]
+                ddt/dx in Milliseconds over N: [-2.63116788E8]
+  Explanation: Every time someone searches for "lucha libre", it will statistically take less for the next person to search for it
+
+Search string: [samsung computer]
+                ddt/dx in Milliseconds over N: [-2.63099231E8]
+  Explanation: Every time someone searches for "samsung computer", it will statistically take less for the next person to search for it
+
+Search string: [ozone]
+                ddt/dx in Milliseconds over N: [-2.63027221E8]
+  Explanation: Every time someone searches for "ozone", it will statistically take less for the next person to search for it
+
+Search string: [vga adaptor]
+                ddt/dx in Milliseconds over N: [-2.6294774E8]
+  Explanation: Every time someone searches for "vga adaptor", it will statistically take less for the next person to search for it
+
+Search string: [ikick]
+                ddt/dx in Milliseconds over N: [-2.62430676E8]
+  Explanation: Every time someone searches for "ikick", it will statistically take less for the next person to search for it
+
+Search string: [car charger for ipod]
+                ddt/dx in Milliseconds over N: [-2.61683278E8]
+  Explanation: Every time someone searches for "car charger for ipod", it will statistically take less for the next person to search for it
+
+Search string: [hp 13]
+                ddt/dx in Milliseconds over N: [-2.61675525E8]
+  Explanation: Every time someone searches for "hp 13", it will statistically take less for the next person to search for it
+
+Search string: [backup battery]
+                ddt/dx in Milliseconds over N: [-2.61655529E8]
+  Explanation: Every time someone searches for "backup battery", it will statistically take less for the next person to search for it
+
+
+
+
+
+Top 10 fastest declining searches:
+Search string: [navy seals]
+                ddt/dx in Milliseconds over N: [2.588548452E9]
+  Explanation: Every time someone searches for "navy seals", it will statistically take 29 days, 23 hours and 2 minutes longer for the next person to search for it
+
+Search string: [windows 8]
+                ddt/dx in Milliseconds over N: [2.522084048E9]
+  Explanation: Every time someone searches for "windows 8", it will statistically take 29 days, 4 hours and 34 minutes longer for the next person to search for it
+
+Search string: [cd iu50v]
+                ddt/dx in Milliseconds over N: [2.518841567E9]
+  Explanation: Every time someone searches for "cd iu50v", it will statistically take 29 days, 3 hours and 40 minutes longer for the next person to search for it
+
+Search string: [insignia led tv]
+                ddt/dx in Milliseconds over N: [-3.586667135714286E7]
+  Explanation: Every time someone searches for "insignia led tv", it will statistically take less for the next person to search for it
+
+Search string: [soda]
+                ddt/dx in Milliseconds over N: [-3.587926764285714E7]
+  Explanation: Every time someone searches for "soda", it will statistically take less for the next person to search for it
+
+Search string: [encino man]
+                ddt/dx in Milliseconds over N: [-3.58829396E7]
+  Explanation: Every time someone searches for "encino man", it will statistically take less for the next person to search for it
+
+Search string: [beats by dr dre monster solo highdefinition overtheear headphones with controltalk white]
+                ddt/dx in Milliseconds over N: [-3.5934077E7]
+  Explanation: Every time someone searches for "beats by dr dre monster solo highdefinition overtheear headphones with controltalk white", it will statistically take less for the next person to search for it
+
+Search string: [touchscreen monitor]
+                ddt/dx in Milliseconds over N: [2.510450688E9]
+  Explanation: Every time someone searches for "touchscreen monitor", it will statistically take 29 days, 1 hours and 20 minutes longer for the next person to search for it
+
+Search string: [lc60le830u]
+                ddt/dx in Milliseconds over N: [2.502917935E9]
+  Explanation: Every time someone searches for "lc60le830u", it will statistically take 28 days, 23 hours and 15 minutes longer for the next person to search for it
+
+Search string: [computer packages]
+                ddt/dx in Milliseconds over N: [2.496103527E9]
+  Explanation: Every time someone searches for "computer packages", it will statistically take 28 days, 21 hours and 21 minutes longer for the next person to search for it
+

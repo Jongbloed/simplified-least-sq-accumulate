@@ -179,22 +179,22 @@
                 (let [oneday (* 1000 60 60 24)
                       onehour (/ oneday 24)
                       oneminute (/ onehour 60)
-                      days (Math/floor (/ msec oneday))
-                      hours (Math/floor (/ (- msec (* days oneday)) onehour))
-                      minutes (Math/floor (/ (- msec (* days oneday) (* hours onehour)) oneminute))]
-                  (str (if (pos? days) (str days " days ") "")
-                       (if (pos? hours) (str hours " hours and ") "")
-                       (if (pos? hours) (str minutes " minutes ") ""))))
+                      days (int (/ msec oneday))
+                      hours (int (/ (- msec (* days oneday)) onehour))
+                      minutes (int (/ (- msec (* days oneday) (* hours onehour)) oneminute))]
+                  (str (if (pos? (abs days)) (str days " days, ") "")
+                       (if (pos? (abs hours)) (str hours " hours and ") "")
+                       (if (pos? (abs hours)) (str minutes " minutes ") ""))))
             explain
               (fn [kv]
                 (let [[msec_n query] (f/untuple kv)
                       word (if (neg? msec_n) "less" "longer")]
-                  (str "Search string: ["
+                  (str "                Search string: ["
                        query
-                       "]\r\n                ddt/dx in Milliseconds over N: [" (double msec_n)
-                       "]\r\n  Explanation: Every time someone searches for \"" query
-                       "\", it will take " (describe-msec msec_n)
-                       " days " word " for the next person to search for it\r\n")))
+                       "]\r\nddt/dx in Milliseconds over N: [" (double msec_n)
+                       "]\r\n                  Explanation: Every time someone searches for \"" query
+                       "\", it will statistically take " (describe-msec msec_n) word
+                       " for the next person to search for it\r\n\r\n")))
 
             top-ten
               (-> distinct-slope-and-query
@@ -207,11 +207,12 @@
                   f/sort-by-key
                   f/cache
                   (f/take-ordered 10 descending))]
-
-        (spit "result.txt"
-          (str "Top 30 fastest growing searches:\r\n"
+; todo: direct index koppelen om aan te ordenen ipv timestamp?
+; niet dt op de y as maar 1/dt, en als dt 0 is neem je gewoon x+1/dt ipv de vorige entry (nog een persoon op zelfde ijdstip = 2 per tijdseenheid)
+        (spit "result1.txt"
+          (str "Top 10 fastest growing searches:\r\n"
                (apply str (map explain top-ten))
-               "\r\n\r\nTop 30 fastest declining searches:\r\n"
+               "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n"
                (apply str (map explain bottom-ten))))))))
 
 ;      (save-rdd! date-query-ordered)
