@@ -7,7 +7,8 @@
             [clj-time.format :as dt]
             [clj-time.core :as t]
             [clj-time.coerce :as tc]
-            [clj-time.local :as tl]))
+            [clj-time.local :as tl])
+  (:import  (java.lang Math)))
 
 (f/defsparkfn fourth-and-sixth-csv
   [line]
@@ -31,13 +32,19 @@
 (f/defsparkfn parse-time-str-mb-long
   [datestr]
   "returns a date parsed from input string, in milliseconds, or nil"
-  (tc/to-long
-   (try (dt/parse (dt/formatter :date-hour-minute-second-ms) datestr)
-     (catch Exception e
-       (try (dt/parse (dt/formatter :date-hour-minute-second) datestr)
-         (catch Exception e
-           (try (dt/parse (dt/formatter :date-hour-minute) datestr)
-             (catch Exception e nil))))))))
+  (let [timestamp
+        (try (dt/parse (dt/formatter :date-hour-minute-second-ms) datestr)
+          (catch Exception e
+            (try (dt/parse (dt/formatter :date-hour-minute-second) datestr)
+              (catch Exception e
+                (try (dt/parse (dt/formatter :date-hour-minute) datestr)
+                  (catch Exception e nil))))))]
+    (if (nil? timestamp) nil
+      (t/in-millis
+       (t/interval
+        (t/date-time 0)
+        timestamp)))))
+
 
 (f/defsparkfn line-to-time-query-tuple2
   [line]
@@ -55,7 +62,7 @@
     (ft/tuple v k)))
 
 (f/defsparkfn squared [x] (* x x))
-(f/defsparkfn abs [x] #(if (<= % 0) (- x) x))
+(f/defsparkfn abs [x] (if (<= x 0) (- x) x))
 
 (f/defsparkfn iter-seq
   [iter]
@@ -102,7 +109,7 @@
   (f/with-context sc c
     (let
       [date-query-ordered
-        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv")
+        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv.sample")
             (f/map-to-pair line-to-time-query-tuple2) ; (query date, query)
             (f/filter (ft/key-val-fn (f/fn [timestamp query] timestamp))) ; filter out nil timestamp
             f/sort-by-key ; (query date sorted, query)
@@ -114,7 +121,7 @@
             (f/map-to-pair (f/fn [key] (ft/tuple key 1))) ;(query, 1)
             (f/reduce-by-key (f/fn [_ __] (+ _ __))) ;(query, count)
             (f/filter (f/fn [tuple] (> (second (f/untuple tuple)) 2))) ;eliminate queries with too few data points
-            (f/map-values (f/fn [count] (/ count 2)))
+            (f/map-values (f/fn [count] (/ (- count 2) 2))) ;after taking differences, number of data points will be one less, and also x will start at 0
             f/cache)
              ;(query, meanX) where count >=3
        query-Y-and-meanX
@@ -124,12 +131,6 @@
             (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
             f/cache)
                 ; (query, (Y, meanX))
-       distinct-query-and-meanY
-        (-> query-Y-and-meanX
-            (f/map-values (ft/key-val-fn (f/fn [timestamp halfn] (/ timestamp (* 2 halfn)))))
-            (f/reduce-by-key (f/fn [_ __] (+ _ __))) ; (query, meanY)
-            f/cache)
-
        distinct-queries-and-XY
         (-> date-query-ordered
             (f/map-to-pair flip-tuple)
@@ -137,7 +138,19 @@
             (f/map-to-pair (ft/key-val-val-fn (f/fn [query date meanX] (ft/tuple query date)))) ; forget about meanX for now
             f/group-by-key
             (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
-            (f/map-values timestamp-entries-to-xy-tuple) ; (query, (X, Y))
+            (f/map-values timestamp-entries-to-xy-tuple) ; (query, ((X1, Y1), (X2, Y2)...(Xn, Yn)))
+            f/cache)
+
+       distinct-query-and-meanY
+        (-> distinct-queries-and-XY
+            (f/map-to-pair
+              (ft/key-val-fn
+               (f/fn
+                [query coords]
+                (let [yvalues (map #(second (untuple %)) (iterable-seq coords))
+                      numdatapoints (count yvalues)
+                      sumY (reduce + yvalues)]
+                  (ft/tuple query (/ sumY numdatapoints)))))); (query, meanY)
             f/cache)
 
        distinct-query-and-meanXmeanY-and-XY
@@ -167,35 +180,37 @@
                       word (if (neg? msec_n) "less" "longer")]
                   (str "Search string: |"
                        query
-                       "| ddt/dx in Milliseconds over N: |" msec_n
-                       "| Explanation: Everytime someone searches for " query
-                       ", it will take " (with-precision 2 (bigdec (abs (/ msec_n 1000 3600 24))))
+                       "|\r\n                ddt/dx in Milliseconds over N: |" msec_n
+                       "|\r\n  Explanation: Every time someone searches for " query
+                       ", it will take " (Math/round (double (/ msec_n 1000 3600 24)))
                        " days " word " for the next person to search for " query "\r\n")))
 
             top-ten
               (-> distinct-slope-and-query
                   f/sort-by-key
                   f/cache
-                  (f/take-ordered 10 ascending))
+                  (f/take-ordered 30 ascending))
 
             bottom-ten
               (-> distinct-slope-and-query
                   f/sort-by-key
                   f/cache
-                  (f/take-ordered 10 descending))]
+                  (f/take-ordered 30 descending))]
 
-        (spit "result.txt"
-          (str "Top 10 fastest growing searches:\r\n"
+        (spit "sampleresult.txt"
+          (str "Top 30 fastest growing searches:\r\n"
                (apply str (map explain top-ten))
-               "Top 10 fastest declining searches:\r\n"
+               "\r\n\r\nTop 30 fastest declining searches:\r\n"
                (apply str (map explain bottom-ten)))))
 
 
 
-      ;(f/save-as-text-file date-query-ordered "spark_textfiles/date-query-ordered")
-      ;(f/save-as-text-file counted-queries "spark_textfiles/counted-queries")
-      ;(f/save-as-text-file distinct-queries-and-dates "spark_textfiles/distinct-queries-and-dates")
-      ;(println "got to query-slope!!!\n\n")
+      (save-rdd! date-query-ordered)
+      (save-rdd! distinct-query-and-meanX)
+      (save-rdd! query-Y-and-meanX)
+      (save-rdd! distinct-query-and-meanY)
+      (save-rdd! distinct-queries-and-XY)
+      (save-rdd! distinct-query-and-meanXmeanY-and-XY)
       (save-rdd! distinct-slope-and-query))))
 
   ;    (-> distinct-query-and-meanY

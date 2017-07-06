@@ -1,0 +1,22 @@
+Top 30 fastest growing searches:
+Search string: |lg monitors|
+                ddt/dx in Milliseconds over N: |0|
+  Explanation: Every time someone searches for lg monitors, it will take 0 days longer for the next person to search for lg monitors
+Search string: |tom tom|
+                ddt/dx in Milliseconds over N: |0|
+  Explanation: Every time someone searches for tom tom, it will take 0 days longer for the next person to search for tom tom
+Search string: |hp touchpad|
+                ddt/dx in Milliseconds over N: |361903531|
+  Explanation: Every time someone searches for hp touchpad, it will take 4 days longer for the next person to search for hp touchpad
+
+
+Top 30 fastest declining searches:
+Search string: |hp touchpad|
+                ddt/dx in Milliseconds over N: |361903531|
+  Explanation: Every time someone searches for hp touchpad, it will take 4 days longer for the next person to search for hp touchpad
+Search string: |lg monitors|
+                ddt/dx in Milliseconds over N: |0|
+  Explanation: Every time someone searches for lg monitors, it will take 0 days longer for the next person to search for lg monitors
+Search string: |tom tom|
+                ddt/dx in Milliseconds over N: |0|
+  Explanation: Every time someone searches for tom tom, it will take 0 days longer for the next person to search for tom tom

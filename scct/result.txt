@@ -1,0 +1,42 @@
+Top 10 fastest growing searches:
+Search string: |hp touchpad| ddt/dx in Milliseconds over N: |101139414905398303423/986758490599645|
+  Explanation: Every time someone searches for hp touchpad, it will take 102 seconds longer for the next person to search for hp touchpad
+Search string: |touchpad| ddt/dx in Milliseconds over N: |75071620586163854663/271815358263130|
+  Explanation: Every time someone searches for touchpad, it will take 276 seconds longer for the next person to search for touchpad
+Search string: |ipad| ddt/dx in Milliseconds over N: |7173888737697049339/9928034206340|
+  Explanation: Every time someone searches for ipad, it will take 723 seconds longer for the next person to search for ipad
+Search string: |laborday_computers_20110902| ddt/dx in Milliseconds over N: |25756662805558515213/31957311257650|
+  Explanation: Every time someone searches for laborday_computers_20110902, it will take 806 seconds longer for the next person to search for laborday_computers_20110902
+Search string: |hp tablet| ddt/dx in Milliseconds over N: |16355288635099357121/12899239116120|
+  Explanation: Every time someone searches for hp tablet, it will take 1268 seconds longer for the next person to search for hp tablet
+Search string: |laptop| ddt/dx in Milliseconds over N: |20002840377077984206/9646813082025|
+  Explanation: Every time someone searches for laptop, it will take 2074 seconds longer for the next person to search for laptop
+Search string: |laptops| ddt/dx in Milliseconds over N: |18272691238449908593/8049998226654|
+  Explanation: Every time someone searches for laptops, it will take 2270 seconds longer for the next person to search for laptops
+Search string: |lil wayne| ddt/dx in Milliseconds over N: |824004090516823947/261902726120|
+  Explanation: Every time someone searches for lil wayne, it will take 3146 seconds longer for the next person to search for lil wayne
+Search string: |laborday_television_20110902| ddt/dx in Milliseconds over N: |2767655601432910921/737673583626|
+  Explanation: Every time someone searches for laborday_television_20110902, it will take 3752 seconds longer for the next person to search for laborday_television_20110902
+Search string: |beats| ddt/dx in Milliseconds over N: |2190033874909663067/462465747425|
+  Explanation: Every time someone searches for beats, it will take 4736 seconds longer for the next person to search for beats
+Top 10 fastest declining searches:
+Search string: |cars blu ray| ddt/dx in Milliseconds over N: |5262782955156/5|
+  Explanation: Every time someone searches for cars blu ray, it will take 1052556591 seconds longer for the next person to search for cars blu ray
+Search string: |camera bag flipside| ddt/dx in Milliseconds over N: |5262780948624/5|
+  Explanation: Every time someone searches for camera bag flipside, it will take 1052556190 seconds longer for the next person to search for camera bag flipside
+Search string: |pokemon mewtwo returns| ddt/dx in Milliseconds over N: |5262765077924/5|
+  Explanation: Every time someone searches for pokemon mewtwo returns, it will take 1052553016 seconds longer for the next person to search for pokemon mewtwo returns
+Search string: |keraoke| ddt/dx in Milliseconds over N: |1052550528880|
+  Explanation: Every time someone searches for keraoke, it will take 1052550529 seconds longer for the next person to search for keraoke
+Search string: |phone with upgrade| ddt/dx in Milliseconds over N: |1052550123548|
+  Explanation: Every time someone searches for phone with upgrade, it will take 1052550124 seconds longer for the next person to search for phone with upgrade
+Search string: |external harddrive casing 25| ddt/dx in Milliseconds over N: |5262748880192/5|
+  Explanation: Every time someone searches for external harddrive casing 25, it will take 1052549776 seconds longer for the next person to search for external harddrive casing 25
+Search string: |cell phone plans| ddt/dx in Milliseconds over N: |5262728509524/5|
+  Explanation: Every time someone searches for cell phone plans, it will take 1052545702 seconds longer for the next person to search for cell phone plans
+Search string: |dell i14r| ddt/dx in Milliseconds over N: |1052544316750|
+  Explanation: Every time someone searches for dell i14r, it will take 1052544317 seconds longer for the next person to search for dell i14r
+Search string: |asus laptop 101| ddt/dx in Milliseconds over N: |5262721297931/5|
+  Explanation: Every time someone searches for asus laptop 101, it will take 1052544260 seconds longer for the next person to search for asus laptop 101
+Search string: |microwave range frigidarie| ddt/dx in Milliseconds over N: |5262718795984/5|
+  Explanation: Every time someone searches for microwave range frigidarie, it will take 1052543759 seconds longer for the next person to search for microwave range frigidarie
