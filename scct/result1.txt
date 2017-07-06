@@ -1,86 +1,88 @@
 Top 10 fastest growing searches:
-Search string: [computer headsets]
-                ddt/dx in Milliseconds over N: [-2.63338083E8]
-  Explanation: Every time someone searches for "computer headsets", it will statistically take less for the next person to search for it
 
-Search string: [uninterruptible power supply]
-                ddt/dx in Milliseconds over N: [-2.63314502E8]
-  Explanation: Every time someone searches for "uninterruptible power supply", it will statistically take less for the next person to search for it
+                  Search string: [gilbert]
+  ddt/dx in Milliseconds over N: [-2.411517322E9]
+                    Explanation: Every time someone searches for "gilbert", it will statistically take 27 days, 21 hours and 51 minutes less for the next person to search for it
 
-Search string: [lucha libre]
-                ddt/dx in Milliseconds over N: [-2.63116788E8]
-  Explanation: Every time someone searches for "lucha libre", it will statistically take less for the next person to search for it
+                  Search string: [dvd storage tower]
+  ddt/dx in Milliseconds over N: [-2.348926013E9]
+                    Explanation: Every time someone searches for "dvd storage tower", it will statistically take 27 days, 4 hours and 28 minutes less for the next person to search for it
 
-Search string: [samsung computer]
-                ddt/dx in Milliseconds over N: [-2.63099231E8]
-  Explanation: Every time someone searches for "samsung computer", it will statistically take less for the next person to search for it
+                  Search string: [brandon flowers]
+  ddt/dx in Milliseconds over N: [-2.316039361E9]
+                    Explanation: Every time someone searches for "brandon flowers", it will statistically take 26 days, 19 hours and 20 minutes less for the next person to search for it
 
-Search string: [ozone]
-                ddt/dx in Milliseconds over N: [-2.63027221E8]
-  Explanation: Every time someone searches for "ozone", it will statistically take less for the next person to search for it
+                  Search string: [evo 4]
+  ddt/dx in Milliseconds over N: [-2.274159406E9]
+                    Explanation: Every time someone searches for "evo 4", it will statistically take 26 days, 7 hours and 42 minutes less for the next person to search for it
 
-Search string: [vga adaptor]
-                ddt/dx in Milliseconds over N: [-2.6294774E8]
-  Explanation: Every time someone searches for "vga adaptor", it will statistically take less for the next person to search for it
+                  Search string: [magicjack]
+  ddt/dx in Milliseconds over N: [-2.127926496E9]
+                    Explanation: Every time someone searches for "magicjack", it will statistically take 24 days, 15 hours and 5 minutes less for the next person to search for it
 
-Search string: [ikick]
-                ddt/dx in Milliseconds over N: [-2.62430676E8]
-  Explanation: Every time someone searches for "ikick", it will statistically take less for the next person to search for it
+                  Search string: [1998038]
+  ddt/dx in Milliseconds over N: [-2.104901926E9]
+                    Explanation: Every time someone searches for "1998038", it will statistically take 24 days, 8 hours and 41 minutes less for the next person to search for it
 
-Search string: [car charger for ipod]
-                ddt/dx in Milliseconds over N: [-2.61683278E8]
-  Explanation: Every time someone searches for "car charger for ipod", it will statistically take less for the next person to search for it
+                  Search string: [modern warfar 2]
+  ddt/dx in Milliseconds over N: [-2.097366257E9]
+                    Explanation: Every time someone searches for "modern warfar 2", it will statistically take 24 days, 6 hours and 36 minutes less for the next person to search for it
 
-Search string: [hp 13]
-                ddt/dx in Milliseconds over N: [-2.61675525E8]
-  Explanation: Every time someone searches for "hp 13", it will statistically take less for the next person to search for it
+                  Search string: [melanie fiona]
+  ddt/dx in Milliseconds over N: [-2.07662761E9]
+                    Explanation: Every time someone searches for "melanie fiona", it will statistically take 24 days, less for the next person to search for it
 
-Search string: [backup battery]
-                ddt/dx in Milliseconds over N: [-2.61655529E8]
-  Explanation: Every time someone searches for "backup battery", it will statistically take less for the next person to search for it
+                  Search string: [reyli]
+  ddt/dx in Milliseconds over N: [-2.059535769E9]
+                    Explanation: Every time someone searches for "reyli", it will statistically take 23 days, 20 hours and 5 minutes less for the next person to search for it
+
+                  Search string: [6 speaker]
+  ddt/dx in Milliseconds over N: [-2.035719292E9]
+                    Explanation: Every time someone searches for "6 speaker", it will statistically take 23 days, 13 hours and 28 minutes less for the next person to search for it
 
 
 
 
 
 Top 10 fastest declining searches:
-Search string: [navy seals]
-                ddt/dx in Milliseconds over N: [2.588548452E9]
-  Explanation: Every time someone searches for "navy seals", it will statistically take 29 days, 23 hours and 2 minutes longer for the next person to search for it
 
-Search string: [windows 8]
-                ddt/dx in Milliseconds over N: [2.522084048E9]
-  Explanation: Every time someone searches for "windows 8", it will statistically take 29 days, 4 hours and 34 minutes longer for the next person to search for it
+                  Search string: [windows 8]
+  ddt/dx in Milliseconds over N: [2.522084048E9]
+                    Explanation: Every time someone searches for "windows 8", it will statistically take 29 days, 4 hours and 34 minutes longer for the next person to search for it
 
-Search string: [cd iu50v]
-                ddt/dx in Milliseconds over N: [2.518841567E9]
-  Explanation: Every time someone searches for "cd iu50v", it will statistically take 29 days, 3 hours and 40 minutes longer for the next person to search for it
+                  Search string: [touchscreen monitor]
+  ddt/dx in Milliseconds over N: [2.510450688E9]
+                    Explanation: Every time someone searches for "touchscreen monitor", it will statistically take 29 days, 1 hours and 20 minutes longer for the next person to search for it
 
-Search string: [insignia led tv]
-                ddt/dx in Milliseconds over N: [-3.586667135714286E7]
-  Explanation: Every time someone searches for "insignia led tv", it will statistically take less for the next person to search for it
+                  Search string: [lc60le830u]
+  ddt/dx in Milliseconds over N: [2.502917935E9]
+                    Explanation: Every time someone searches for "lc60le830u", it will statistically take 28 days, 23 hours and 15 minutes longer for the next person to search for it
 
-Search string: [soda]
-                ddt/dx in Milliseconds over N: [-3.587926764285714E7]
-  Explanation: Every time someone searches for "soda", it will statistically take less for the next person to search for it
+                  Search string: [8350]
+  ddt/dx in Milliseconds over N: [2.441441981E9]
+                    Explanation: Every time someone searches for "8350", it will statistically take 28 days, 6 hours and 10 minutes longer for the next person to search for it
 
-Search string: [encino man]
-                ddt/dx in Milliseconds over N: [-3.58829396E7]
-  Explanation: Every time someone searches for "encino man", it will statistically take less for the next person to search for it
+                  Search string: [usb storage]
+  ddt/dx in Milliseconds over N: [2.440547127E9]
+                    Explanation: Every time someone searches for "usb storage", it will statistically take 28 days, 5 hours and 55 minutes longer for the next person to search for it
 
-Search string: [beats by dr dre monster solo highdefinition overtheear headphones with controltalk white]
-                ddt/dx in Milliseconds over N: [-3.5934077E7]
-  Explanation: Every time someone searches for "beats by dr dre monster solo highdefinition overtheear headphones with controltalk white", it will statistically take less for the next person to search for it
+                  Search string: [digital tv antennas]
+  ddt/dx in Milliseconds over N: [2.41835769E9]
+                    Explanation: Every time someone searches for "digital tv antennas", it will statistically take 27 days, 23 hours and 45 minutes longer for the next person to search for it
 
-Search string: [touchscreen monitor]
-                ddt/dx in Milliseconds over N: [2.510450688E9]
-  Explanation: Every time someone searches for "touchscreen monitor", it will statistically take 29 days, 1 hours and 20 minutes longer for the next person to search for it
+                  Search string: [blue crush 2]
+  ddt/dx in Milliseconds over N: [2.393025996E9]
+                    Explanation: Every time someone searches for "blue crush 2", it will statistically take 27 days, 16 hours and 43 minutes longer for the next person to search for it
 
-Search string: [lc60le830u]
-                ddt/dx in Milliseconds over N: [2.502917935E9]
-  Explanation: Every time someone searches for "lc60le830u", it will statistically take 28 days, 23 hours and 15 minutes longer for the next person to search for it
+                  Search string: [cake boss]
+  ddt/dx in Milliseconds over N: [2.388795865E9]
+                    Explanation: Every time someone searches for "cake boss", it will statistically take 27 days, 15 hours and 33 minutes longer for the next person to search for it
 
-Search string: [computer packages]
-                ddt/dx in Milliseconds over N: [2.496103527E9]
-  Explanation: Every time someone searches for "computer packages", it will statistically take 28 days, 21 hours and 21 minutes longer for the next person to search for it
+                  Search string: [vinotemp]
+  ddt/dx in Milliseconds over N: [2.297476669E9]
+                    Explanation: Every time someone searches for "vinotemp", it will statistically take 26 days, 14 hours and 11 minutes longer for the next person to search for it
+
+                  Search string: [portable car dvd]
+  ddt/dx in Milliseconds over N: [2.293445111E9]
+                    Explanation: Every time someone searches for "portable car dvd", it will statistically take 26 days, 13 hours and 4 minutes longer for the next person to search for it
 

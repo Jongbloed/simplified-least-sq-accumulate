@@ -80,8 +80,8 @@
 (f/defsparkfn timestamp-entries-to-xy-tuple
   [iterable]
   (seq
-    (map-indexed #(ft/tuple %1 (- %2))
-      (map (partial apply -)
+    (map-indexed #(ft/tuple %1 %2)
+      (map #(- (second %) (first %))
         (partition 2 1 (iterable-seq iterable))))))
 
 (def means-and-coords-to-least-sq-slope ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
@@ -182,37 +182,36 @@
                       days (int (/ msec oneday))
                       hours (int (/ (- msec (* days oneday)) onehour))
                       minutes (int (/ (- msec (* days oneday) (* hours onehour)) oneminute))]
-                  (str (if (pos? (abs days)) (str days " days, ") "")
-                       (if (pos? (abs hours)) (str hours " hours and ") "")
-                       (if (pos? (abs hours)) (str minutes " minutes ") ""))))
+                  (str (if (pos? days) (str days " days, ") "")
+                       (if (pos? hours) (str hours " hours and ") "")
+                       (if (pos? hours) (str minutes " minutes ") ""))))
             explain
               (fn [kv]
                 (let [[msec_n query] (f/untuple kv)
                       word (if (neg? msec_n) "less" "longer")]
-                  (str "                Search string: ["
-                       query
-                       "]\r\nddt/dx in Milliseconds over N: [" (double msec_n)
-                       "]\r\n                  Explanation: Every time someone searches for \"" query
-                       "\", it will statistically take " (describe-msec msec_n) word
+                  (str "                  Search string: [" query
+                       "]\r\n  ddt/dx in Milliseconds over N: [" (double msec_n)
+                       "]\r\n                    Explanation: Every time someone searches for \"" query
+                       "\", it will statistically take " (describe-msec (abs msec_n)) word
                        " for the next person to search for it\r\n\r\n")))
 
             top-ten
               (-> distinct-slope-and-query
-                  f/sort-by-key
+                  (f/filter (ft/key-val-fn (f/fn [slope _] (< slope 0))))
                   f/cache
                   (f/take-ordered 10 ascending))
 
             bottom-ten
               (-> distinct-slope-and-query
-                  f/sort-by-key
+                  (f/filter (ft/key-val-fn (f/fn [slope _] (> slope 0))))
                   f/cache
                   (f/take-ordered 10 descending))]
 ; todo: direct index koppelen om aan te ordenen ipv timestamp?
 ; niet dt op de y as maar 1/dt, en als dt 0 is neem je gewoon x+1/dt ipv de vorige entry (nog een persoon op zelfde ijdstip = 2 per tijdseenheid)
         (spit "result1.txt"
-          (str "Top 10 fastest growing searches:\r\n"
+          (str "Top 10 fastest growing searches:\r\n\r\n"
                (apply str (map explain top-ten))
-               "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n"
+               "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n\r\n"
                (apply str (map explain bottom-ten))))))))
 
 ;      (save-rdd! date-query-ordered)
