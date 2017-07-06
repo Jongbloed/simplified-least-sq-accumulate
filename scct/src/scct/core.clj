@@ -7,7 +7,8 @@
             [clj-time.format :as dt]
             [clj-time.core :as t]
             [clj-time.coerce :as tc]
-            [clj-time.local :as tl]))
+            [clj-time.local :as tl])
+  (:import  [java.util Comparator]))
 
 (f/defsparkfn fourth-and-sixth-csv
   [line]
@@ -69,12 +70,24 @@
   ;"Takes a Scala iterable s, and returns a lazy-seq of its contents."
   (iter-seq (.iterator s)))
 
-(f/defsparkfn differences
+(f/defsparkfn timestamp-entries-to-xy-tuple
   [iterable]
   (seq
-    (map -
+    (map-indexed #(ft/tuple %1 (- %2))
       (map (partial apply -)
         (partition 2 1 (iterable-seq iterable))))))
+
+(def means-and-coords-to-least-sq-slope ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
+  (ft/key-val-val-fn
+    (f/fn [query means coords]
+      (let [[X_ Y_] (f/untuple means)
+            gridpoints (map #(let [[x y] (f/untuple %)] {:x x :y y}) (iterable-seq coords))
+            numeratorpartials (map #(* (- (% :x) X_) (- (% :y) Y_)) gridpoints)
+            denominatorpartials (map #(squared (- (% :x) X_)) gridpoints)
+            numerator (reduce + numeratorpartials)
+            denominator (reduce + denominatorpartials)
+            slope (/ numerator denominator)]
+        (ft/tuple slope query))))) ; (query, slope)
 
 (def c
   (-> (conf/spark-conf)
@@ -117,24 +130,42 @@
             (f/reduce-by-key (f/fn [_ __] (+ _ __))) ; (query, meanY)
             f/cache)
 
-       distinct-queries-and-Y
+       distinct-queries-and-XY
         (-> date-query-ordered
             (f/map-to-pair flip-tuple)
             (f/join distinct-query-and-meanX) ;filter out <3 data point entries
             (f/map-to-pair (ft/key-val-val-fn (f/fn [query date meanX] (ft/tuple query date)))) ; forget about meanX for now
             f/group-by-key
             (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
-            (f/map-values differences)
-            ;(f/flat-map-to-pair
-             ; (f/fn [rdd]
-              ;  (f/fold (._2 rdd)
-               ;         []
-                ;        (f/fn [diffs value]
-                 ;         (if (empty? diffs)
-                  ;          [value]
-                   ;         (conj (pop diffs)
-                    ;          [(- value (peek diffs))]
+            (f/map-values timestamp-entries-to-xy-tuple) ; (query, (X, Y))
+            f/cache)
+
+       distinct-query-and-meanXmeanY-and-XY
+        (-> distinct-query-and-meanX ;(query, meanX)
+            (f/join distinct-query-and-meanY) ;(query, (meanX, meanY))
+            (f/join distinct-queries-and-XY) ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
+            f/cache)
+
+       distinct-slope-and-query
+        (-> distinct-query-and-meanXmeanY-and-XY
+            (f/map-to-pair means-and-coords-to-least-sq-slope)
             f/cache)]
+
+      (let [ascending (fn [kv1 kv2] (let [[n1 _] (f/untuple kv1) [n2 _] (f/untuple kv2)] (- n1 n2)))
+            descending (fn [kv1 kv2] (let [[n1 _] (f/untuple kv1) [n2 _] (f/untuple kv2)] (- n2 n1)))]
+        (println "Top 10 fastest growing queries:")
+        (-> distinct-slope-and-query
+            f/sort-by-key
+            f/cache
+            (f/take-ordered 10 ascending)
+            clojure.pprint/pprint)
+
+        (println "Top 10 fastest declining queries:")
+        (-> distinct-slope-and-query
+            f/sort-by-key
+            f/cache
+            (f/take-ordered 10 descending)
+            clojure.pprint/pprint))
 
 
 
@@ -142,7 +173,7 @@
       ;(f/save-as-text-file counted-queries "spark_textfiles/counted-queries")
       ;(f/save-as-text-file distinct-queries-and-dates "spark_textfiles/distinct-queries-and-dates")
       ;(println "got to query-slope!!!\n\n")
-      (save-rdd! distinct-queries-and-Y))))
+      (save-rdd! distinct-slope-and-query))))
 
   ;    (-> distinct-query-and-meanY
    ;       (f/take 40)
