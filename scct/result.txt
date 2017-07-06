@@ -1,42 +1,184 @@
-Top 10 fastest growing searches:
-Search string: |hp touchpad| ddt/dx in Milliseconds over N: |101139414905398303423/986758490599645|
-  Explanation: Every time someone searches for hp touchpad, it will take 102 seconds longer for the next person to search for hp touchpad
-Search string: |touchpad| ddt/dx in Milliseconds over N: |75071620586163854663/271815358263130|
-  Explanation: Every time someone searches for touchpad, it will take 276 seconds longer for the next person to search for touchpad
-Search string: |ipad| ddt/dx in Milliseconds over N: |7173888737697049339/9928034206340|
-  Explanation: Every time someone searches for ipad, it will take 723 seconds longer for the next person to search for ipad
-Search string: |laborday_computers_20110902| ddt/dx in Milliseconds over N: |25756662805558515213/31957311257650|
-  Explanation: Every time someone searches for laborday_computers_20110902, it will take 806 seconds longer for the next person to search for laborday_computers_20110902
-Search string: |hp tablet| ddt/dx in Milliseconds over N: |16355288635099357121/12899239116120|
-  Explanation: Every time someone searches for hp tablet, it will take 1268 seconds longer for the next person to search for hp tablet
-Search string: |laptop| ddt/dx in Milliseconds over N: |20002840377077984206/9646813082025|
-  Explanation: Every time someone searches for laptop, it will take 2074 seconds longer for the next person to search for laptop
-Search string: |laptops| ddt/dx in Milliseconds over N: |18272691238449908593/8049998226654|
-  Explanation: Every time someone searches for laptops, it will take 2270 seconds longer for the next person to search for laptops
-Search string: |lil wayne| ddt/dx in Milliseconds over N: |824004090516823947/261902726120|
-  Explanation: Every time someone searches for lil wayne, it will take 3146 seconds longer for the next person to search for lil wayne
-Search string: |laborday_television_20110902| ddt/dx in Milliseconds over N: |2767655601432910921/737673583626|
-  Explanation: Every time someone searches for laborday_television_20110902, it will take 3752 seconds longer for the next person to search for laborday_television_20110902
-Search string: |beats| ddt/dx in Milliseconds over N: |2190033874909663067/462465747425|
-  Explanation: Every time someone searches for beats, it will take 4736 seconds longer for the next person to search for beats
-Top 10 fastest declining searches:
-Search string: |cars blu ray| ddt/dx in Milliseconds over N: |5262782955156/5|
-  Explanation: Every time someone searches for cars blu ray, it will take 1052556591 seconds longer for the next person to search for cars blu ray
-Search string: |camera bag flipside| ddt/dx in Milliseconds over N: |5262780948624/5|
-  Explanation: Every time someone searches for camera bag flipside, it will take 1052556190 seconds longer for the next person to search for camera bag flipside
-Search string: |pokemon mewtwo returns| ddt/dx in Milliseconds over N: |5262765077924/5|
-  Explanation: Every time someone searches for pokemon mewtwo returns, it will take 1052553016 seconds longer for the next person to search for pokemon mewtwo returns
-Search string: |keraoke| ddt/dx in Milliseconds over N: |1052550528880|
-  Explanation: Every time someone searches for keraoke, it will take 1052550529 seconds longer for the next person to search for keraoke
-Search string: |phone with upgrade| ddt/dx in Milliseconds over N: |1052550123548|
-  Explanation: Every time someone searches for phone with upgrade, it will take 1052550124 seconds longer for the next person to search for phone with upgrade
-Search string: |external harddrive casing 25| ddt/dx in Milliseconds over N: |5262748880192/5|
-  Explanation: Every time someone searches for external harddrive casing 25, it will take 1052549776 seconds longer for the next person to search for external harddrive casing 25
-Search string: |cell phone plans| ddt/dx in Milliseconds over N: |5262728509524/5|
-  Explanation: Every time someone searches for cell phone plans, it will take 1052545702 seconds longer for the next person to search for cell phone plans
-Search string: |dell i14r| ddt/dx in Milliseconds over N: |1052544316750|
-  Explanation: Every time someone searches for dell i14r, it will take 1052544317 seconds longer for the next person to search for dell i14r
-Search string: |asus laptop 101| ddt/dx in Milliseconds over N: |5262721297931/5|
-  Explanation: Every time someone searches for asus laptop 101, it will take 1052544260 seconds longer for the next person to search for asus laptop 101
-Search string: |microwave range frigidarie| ddt/dx in Milliseconds over N: |5262718795984/5|
-  Explanation: Every time someone searches for microwave range frigidarie, it will take 1052543759 seconds longer for the next person to search for microwave range frigidarie
+Top 30 fastest growing searches:
+Search string: |ipodnano|
+                ddt/dx in Milliseconds over N: |-126258984|
+  Explanation: Every time someone searches for ipodnano, it will take 1 days less for the next person to search for ipodnano
+Search string: |touvhpad|
+                ddt/dx in Milliseconds over N: |-125881767|
+  Explanation: Every time someone searches for touvhpad, it will take 1 days less for the next person to search for touvhpad
+Search string: |ipod touch hard case|
+                ddt/dx in Milliseconds over N: |-125770687|
+  Explanation: Every time someone searches for ipod touch hard case, it will take 1 days less for the next person to search for ipod touch hard case
+Search string: |xman first class|
+                ddt/dx in Milliseconds over N: |-125750524|
+  Explanation: Every time someone searches for xman first class, it will take 1 days less for the next person to search for xman first class
+Search string: |ihip|
+                ddt/dx in Milliseconds over N: |-125640856|
+  Explanation: Every time someone searches for ihip, it will take 1 days less for the next person to search for ihip
+Search string: |billy madison|
+                ddt/dx in Milliseconds over N: |-125607798|
+  Explanation: Every time someone searches for billy madison, it will take 1 days less for the next person to search for billy madison
+Search string: |pre 2|
+                ddt/dx in Milliseconds over N: |-123968562|
+  Explanation: Every time someone searches for pre 2, it will take 1 days less for the next person to search for pre 2
+Search string: |s10hd|
+                ddt/dx in Milliseconds over N: |-123720204|
+  Explanation: Every time someone searches for s10hd, it will take 1 days less for the next person to search for s10hd
+Search string: |speaker dock|
+                ddt/dx in Milliseconds over N: |-123645682|
+  Explanation: Every time someone searches for speaker dock, it will take 1 days less for the next person to search for speaker dock
+Search string: |sony 55 tv|
+                ddt/dx in Milliseconds over N: |-123542918|
+  Explanation: Every time someone searches for sony 55 tv, it will take 1 days less for the next person to search for sony 55 tv
+Search string: |wrath of the lich king|
+                ddt/dx in Milliseconds over N: |-123381850|
+  Explanation: Every time someone searches for wrath of the lich king, it will take 1 days less for the next person to search for wrath of the lich king
+Search string: |garmin nuvi 1300 lmt|
+                ddt/dx in Milliseconds over N: |-122677258|
+  Explanation: Every time someone searches for garmin nuvi 1300 lmt, it will take 1 days less for the next person to search for garmin nuvi 1300 lmt
+Search string: |i simple|
+                ddt/dx in Milliseconds over N: |-122644980|
+  Explanation: Every time someone searches for i simple, it will take 1 days less for the next person to search for i simple
+Search string: |tv digital converter|
+                ddt/dx in Milliseconds over N: |-122590445|
+  Explanation: Every time someone searches for tv digital converter, it will take 1 days less for the next person to search for tv digital converter
+Search string: |blacklight|
+                ddt/dx in Milliseconds over N: |-122460504|
+  Explanation: Every time someone searches for blacklight, it will take 1 days less for the next person to search for blacklight
+Search string: |charge mat|
+                ddt/dx in Milliseconds over N: |-121883844|
+  Explanation: Every time someone searches for charge mat, it will take 1 days less for the next person to search for charge mat
+Search string: |samsung pn59d8000|
+                ddt/dx in Milliseconds over N: |-121687482|
+  Explanation: Every time someone searches for samsung pn59d8000, it will take 1 days less for the next person to search for samsung pn59d8000
+Search string: |toshiba c655s5212|
+                ddt/dx in Milliseconds over N: |-121623615|
+  Explanation: Every time someone searches for toshiba c655s5212, it will take 1 days less for the next person to search for toshiba c655s5212
+Search string: |polaroid camera|
+                ddt/dx in Milliseconds over N: |-121001234|
+  Explanation: Every time someone searches for polaroid camera, it will take 1 days less for the next person to search for polaroid camera
+Search string: |6500a|
+                ddt/dx in Milliseconds over N: |-120929923|
+  Explanation: Every time someone searches for 6500a, it will take 1 days less for the next person to search for 6500a
+Search string: |desktop tower|
+                ddt/dx in Milliseconds over N: |-120843726|
+  Explanation: Every time someone searches for desktop tower, it will take 1 days less for the next person to search for desktop tower
+Search string: |x box hdmi|
+                ddt/dx in Milliseconds over N: |-120823157|
+  Explanation: Every time someone searches for x box hdmi, it will take 1 days less for the next person to search for x box hdmi
+Search string: |hp labtops|
+                ddt/dx in Milliseconds over N: |-120779205|
+  Explanation: Every time someone searches for hp labtops, it will take 1 days less for the next person to search for hp labtops
+Search string: |poe|
+                ddt/dx in Milliseconds over N: |-120353835|
+  Explanation: Every time someone searches for poe, it will take 1 days less for the next person to search for poe
+Search string: |iphone 3gs otterbox|
+                ddt/dx in Milliseconds over N: |-120268273|
+  Explanation: Every time someone searches for iphone 3gs otterbox, it will take 1 days less for the next person to search for iphone 3gs otterbox
+Search string: |auxiliary cables|
+                ddt/dx in Milliseconds over N: |-120253229|
+  Explanation: Every time someone searches for auxiliary cables, it will take 1 days less for the next person to search for auxiliary cables
+Search string: |halloweentown|
+                ddt/dx in Milliseconds over N: |-119977940|
+  Explanation: Every time someone searches for halloweentown, it will take 1 days less for the next person to search for halloweentown
+Search string: |yanni|
+                ddt/dx in Milliseconds over N: |-119910023|
+  Explanation: Every time someone searches for yanni, it will take 1 days less for the next person to search for yanni
+Search string: |computer screens|
+                ddt/dx in Milliseconds over N: |-119903700|
+  Explanation: Every time someone searches for computer screens, it will take 1 days less for the next person to search for computer screens
+Search string: |sharp quattron 60|
+                ddt/dx in Milliseconds over N: |-119713969|
+  Explanation: Every time someone searches for sharp quattron 60, it will take 1 days less for the next person to search for sharp quattron 60
+
+
+Top 30 fastest declining searches:
+Search string: |mp3 cd|
+                ddt/dx in Milliseconds over N: |2341658882|
+  Explanation: Every time someone searches for mp3 cd, it will take 27 days longer for the next person to search for mp3 cd
+Search string: |banana|
+                ddt/dx in Milliseconds over N: |2340348906|
+  Explanation: Every time someone searches for banana, it will take 27 days longer for the next person to search for banana
+Search string: |it happened one night|
+                ddt/dx in Milliseconds over N: |2316086420|
+  Explanation: Every time someone searches for it happened one night, it will take 27 days longer for the next person to search for it happened one night
+Search string: |portable car dvd|
+                ddt/dx in Milliseconds over N: |2293445111|
+  Explanation: Every time someone searches for portable car dvd, it will take 27 days longer for the next person to search for portable car dvd
+Search string: |gogol bordello|
+                ddt/dx in Milliseconds over N: |2284817469|
+  Explanation: Every time someone searches for gogol bordello, it will take 26 days longer for the next person to search for gogol bordello
+Search string: |42lv3500|
+                ddt/dx in Milliseconds over N: |14299874/5|
+  Explanation: Every time someone searches for 42lv3500, it will take 0 days longer for the next person to search for 42lv3500
+Search string: |powered subwoofers|
+                ddt/dx in Milliseconds over N: |399777521/140|
+  Explanation: Every time someone searches for powered subwoofers, it will take 0 days longer for the next person to search for powered subwoofers
+Search string: |ipod boombox|
+                ddt/dx in Milliseconds over N: |2752416668/969|
+  Explanation: Every time someone searches for ipod boombox, it will take 0 days longer for the next person to search for ipod boombox
+Search string: |internet router|
+                ddt/dx in Milliseconds over N: |516949009/182|
+  Explanation: Every time someone searches for internet router, it will take 0 days longer for the next person to search for internet router
+Search string: |iphone 3gs case|
+                ddt/dx in Milliseconds over N: |2645610849/935|
+  Explanation: Every time someone searches for iphone 3gs case, it will take 0 days longer for the next person to search for iphone 3gs case
+Search string: |white ipad|
+                ddt/dx in Milliseconds over N: |155622616/55|
+  Explanation: Every time someone searches for white ipad, it will take 0 days longer for the next person to search for white ipad
+Search string: |super|
+                ddt/dx in Milliseconds over N: |6486477297/2300|
+  Explanation: Every time someone searches for super, it will take 0 days longer for the next person to search for super
+Search string: |sidekick 4g|
+                ddt/dx in Milliseconds over N: |1282290263/455|
+  Explanation: Every time someone searches for sidekick 4g, it will take 0 days longer for the next person to search for sidekick 4g
+Search string: |hdtv antennas|
+                ddt/dx in Milliseconds over N: |2781931|
+  Explanation: Every time someone searches for hdtv antennas, it will take 0 days longer for the next person to search for hdtv antennas
+Search string: |toshiba mini netbook|
+                ddt/dx in Milliseconds over N: |2618329|
+  Explanation: Every time someone searches for toshiba mini netbook, it will take 0 days longer for the next person to search for toshiba mini netbook
+Search string: |insignia led tv|
+                ddt/dx in Milliseconds over N: |-502133399/14|
+  Explanation: Every time someone searches for insignia led tv, it will take 0 days less for the next person to search for insignia led tv
+Search string: |soda|
+                ddt/dx in Milliseconds over N: |-502309747/14|
+  Explanation: Every time someone searches for soda, it will take 0 days less for the next person to search for soda
+Search string: |encino man|
+                ddt/dx in Milliseconds over N: |-179414698/5|
+  Explanation: Every time someone searches for encino man, it will take 0 days less for the next person to search for encino man
+Search string: |dvd storage rack|
+                ddt/dx in Milliseconds over N: |-538290088/15|
+  Explanation: Every time someone searches for dvd storage rack, it will take 0 days less for the next person to search for dvd storage rack
+Search string: |beats by dr dre monster solo highdefinition overtheear headphones with controltalk white|
+                ddt/dx in Milliseconds over N: |-35934077|
+  Explanation: Every time someone searches for beats by dr dre monster solo highdefinition overtheear headphones with controltalk white, it will take 0 days less for the next person to search for beats by dr dre monster solo highdefinition overtheear headphones with controltalk white
+Search string: |cake boss|
+                ddt/dx in Milliseconds over N: |2388795865|
+  Explanation: Every time someone searches for cake boss, it will take 28 days longer for the next person to search for cake boss
+Search string: |pn51d490|
+                ddt/dx in Milliseconds over N: |-395455963/11|
+  Explanation: Every time someone searches for pn51d490, it will take 0 days less for the next person to search for pn51d490
+Search string: |the witcher 2|
+                ddt/dx in Milliseconds over N: |-179770137/5|
+  Explanation: Every time someone searches for the witcher 2, it will take 0 days less for the next person to search for the witcher 2
+Search string: |blood in blood out|
+                ddt/dx in Milliseconds over N: |-719398323/20|
+  Explanation: Every time someone searches for blood in blood out, it will take 0 days less for the next person to search for blood in blood out
+Search string: |tv lcd|
+                ddt/dx in Milliseconds over N: |-36032881|
+  Explanation: Every time someone searches for tv lcd, it will take 0 days less for the next person to search for tv lcd
+Search string: |ps3 control|
+                ddt/dx in Milliseconds over N: |-5158132825/143|
+  Explanation: Every time someone searches for ps3 control, it will take 0 days less for the next person to search for ps3 control
+Search string: |energy|
+                ddt/dx in Milliseconds over N: |-180370588/5|
+  Explanation: Every time someone searches for energy, it will take 0 days less for the next person to search for energy
+Search string: |galaxy keyboard|
+                ddt/dx in Milliseconds over N: |-361525727/10|
+  Explanation: Every time someone searches for galaxy keyboard, it will take 0 days less for the next person to search for galaxy keyboard
+Search string: |inkjet printer|
+                ddt/dx in Milliseconds over N: |-1012643621/28|
+  Explanation: Every time someone searches for inkjet printer, it will take 0 days less for the next person to search for inkjet printer
+Search string: |cannon batteries|
+                ddt/dx in Milliseconds over N: |-36186304|
+  Explanation: Every time someone searches for cannon batteries, it will take 0 days less for the next person to search for cannon batteries

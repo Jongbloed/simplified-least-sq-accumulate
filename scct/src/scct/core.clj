@@ -174,28 +174,39 @@
                 (let [[n1 _] (f/untuple kv1)
                       [n2 _] (f/untuple kv2)]
                   (- n2 n1)))
+            describe-msec
+              (fn [msec]
+                (let [oneday (* 1000 60 60 24)
+                      onehour (/ oneday 24)
+                      oneminute (/ onehour 60)
+                      days (Math/floor (/ msec oneday))
+                      hours (Math/floor (/ (- msec (* days oneday)) onehour))
+                      minutes (Math/floor (/ (- msec (* days oneday) (* hours onehour)) oneminute))]
+                  (str (if (pos? days) (str days " days ") "")
+                       (if (pos? hours) (str hours " hours and ") "")
+                       (if (pos? hours) (str minutes " minutes ") ""))))
             explain
               (fn [kv]
                 (let [[msec_n query] (f/untuple kv)
                       word (if (neg? msec_n) "less" "longer")]
-                  (str "Search string: |"
+                  (str "Search string: ["
                        query
-                       "|\r\n                ddt/dx in Milliseconds over N: |" msec_n
-                       "|\r\n  Explanation: Every time someone searches for " query
-                       ", it will take " (Math/round (double (/ (abs msec_n) 1000 60 60 24)))
-                       " days " word " for the next person to search for " query "\r\n")))
+                       "]\r\n                ddt/dx in Milliseconds over N: [" (double msec_n)
+                       "]\r\n  Explanation: Every time someone searches for \"" query
+                       "\", it will take " (describe-msec msec_n)
+                       " days " word " for the next person to search for it\r\n")))
 
             top-ten
               (-> distinct-slope-and-query
                   f/sort-by-key
                   f/cache
-                  (f/take-ordered 30 ascending))
+                  (f/take-ordered 10 ascending))
 
             bottom-ten
               (-> distinct-slope-and-query
                   f/sort-by-key
                   f/cache
-                  (f/take-ordered 30 descending))]
+                  (f/take-ordered 10 descending))]
 
         (spit "result.txt"
           (str "Top 30 fastest growing searches:\r\n"
