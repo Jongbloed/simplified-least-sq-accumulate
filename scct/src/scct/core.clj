@@ -62,7 +62,7 @@
     (ft/tuple v k)))
 
 (f/defsparkfn squared [x] (* x x))
-(f/defsparkfn abs [x] (if (<= x 0) (- x) x))
+(f/defsparkfn abs [x] (if (> x 0) x (- x)))
 
 (f/defsparkfn iter-seq
   [iter]
@@ -109,7 +109,7 @@
   (f/with-context sc c
     (let
       [date-query-ordered
-        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv.sample")
+        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv")
             (f/map-to-pair line-to-time-query-tuple2) ; (query date, query)
             (f/filter (ft/key-val-fn (f/fn [timestamp query] timestamp))) ; filter out nil timestamp
             f/sort-by-key ; (query date sorted, query)
@@ -147,7 +147,7 @@
               (ft/key-val-fn
                (f/fn
                 [query coords]
-                (let [yvalues (map #(second (untuple %)) (iterable-seq coords))
+                (let [yvalues (map #(second (f/untuple %)) (iterable-seq coords))
                       numdatapoints (count yvalues)
                       sumY (reduce + yvalues)]
                   (ft/tuple query (/ sumY numdatapoints)))))); (query, meanY)
@@ -182,7 +182,7 @@
                        query
                        "|\r\n                ddt/dx in Milliseconds over N: |" msec_n
                        "|\r\n  Explanation: Every time someone searches for " query
-                       ", it will take " (Math/round (double (/ msec_n 1000 3600 24)))
+                       ", it will take " (Math/round (double (/ (abs msec_n) 1000 60 60 24)))
                        " days " word " for the next person to search for " query "\r\n")))
 
             top-ten
@@ -197,23 +197,16 @@
                   f/cache
                   (f/take-ordered 30 descending))]
 
-        (spit "sampleresult.txt"
+        (spit "result.txt"
           (str "Top 30 fastest growing searches:\r\n"
                (apply str (map explain top-ten))
                "\r\n\r\nTop 30 fastest declining searches:\r\n"
-               (apply str (map explain bottom-ten)))))
+               (apply str (map explain bottom-ten))))))))
 
-
-
-      (save-rdd! date-query-ordered)
-      (save-rdd! distinct-query-and-meanX)
-      (save-rdd! query-Y-and-meanX)
-      (save-rdd! distinct-query-and-meanY)
-      (save-rdd! distinct-queries-and-XY)
-      (save-rdd! distinct-query-and-meanXmeanY-and-XY)
-      (save-rdd! distinct-slope-and-query))))
-
-  ;    (-> distinct-query-and-meanY
-   ;       (f/take 40)
-    ;      f/collect
-     ;     clojure.pprint/pprint))))
+;      (save-rdd! date-query-ordered)
+ ;     (save-rdd! distinct-query-and-meanX)
+  ;    (save-rdd! query-Y-and-meanX)
+   ;   (save-rdd! distinct-query-and-meanY)
+    ;  (save-rdd! distinct-queries-and-XY)
+     ; (save-rdd! distinct-query-and-meanXmeanY-and-XY)
+      ;(save-rdd! distinct-slope-and-query))))
