@@ -1,5 +1,5 @@
 (ns scct.core
-  (:gen-class)
+  (:gen-class :main true)
   (:require [flambo.conf :as conf]
             [flambo.api :as f]
             [flambo.tuple :as ft]
@@ -7,8 +7,7 @@
             [clj-time.format :as dt]
             [clj-time.core :as t]
             [clj-time.coerce :as tc]
-            [clj-time.local :as tl])
-  (:import  [java.util Comparator]))
+            [clj-time.local :as tl]))
 
 (f/defsparkfn fourth-and-sixth-csv
   [line]
@@ -56,6 +55,7 @@
     (ft/tuple v k)))
 
 (f/defsparkfn squared [x] (* x x))
+(f/defsparkfn abs [x] #(if (<= % 0) (- x) x))
 
 (f/defsparkfn iter-seq
   [iter]
@@ -151,21 +151,44 @@
             (f/map-to-pair means-and-coords-to-least-sq-slope)
             f/cache)]
 
-      (let [ascending (fn [kv1 kv2] (let [[n1 _] (f/untuple kv1) [n2 _] (f/untuple kv2)] (- n1 n2)))
-            descending (fn [kv1 kv2] (let [[n1 _] (f/untuple kv1) [n2 _] (f/untuple kv2)] (- n2 n1)))]
-        (println "Top 10 fastest growing queries:")
-        (-> distinct-slope-and-query
-            f/sort-by-key
-            f/cache
-            (f/take-ordered 10 ascending)
-            clojure.pprint/pprint)
+      (let [ascending
+              (fn [kv1 kv2]
+                (let [[n1 _] (f/untuple kv1)
+                      [n2 _] (f/untuple kv2)]
+                  (- n1 n2)))
+            descending
+              (fn [kv1 kv2]
+                (let [[n1 _] (f/untuple kv1)
+                      [n2 _] (f/untuple kv2)]
+                  (- n2 n1)))
+            explain
+              (fn [kv]
+                (let [[msec_n query] (f/untuple kv)
+                      word (if (neg? msec_n) "less" "longer")]
+                  (str "Search string: |"
+                       query
+                       "| ddt/dx in Milliseconds over N: |" msec_n
+                       "| Explanation: Everytime someone searches for " query
+                       ", it will take " (with-precision 2 (bigdec (abs (/ msec_n 1000 3600 24))))
+                       " days " word " for the next person to search for " query "\r\n")))
 
-        (println "Top 10 fastest declining queries:")
-        (-> distinct-slope-and-query
-            f/sort-by-key
-            f/cache
-            (f/take-ordered 10 descending)
-            clojure.pprint/pprint))
+            top-ten
+              (-> distinct-slope-and-query
+                  f/sort-by-key
+                  f/cache
+                  (f/take-ordered 10 ascending))
+
+            bottom-ten
+              (-> distinct-slope-and-query
+                  f/sort-by-key
+                  f/cache
+                  (f/take-ordered 10 descending))]
+
+        (spit "result.txt"
+          (str "Top 10 fastest growing searches:\r\n"
+               (apply str (map explain top-ten))
+               "Top 10 fastest declining searches:\r\n"
+               (apply str (map explain bottom-ten)))))
 
 
 
