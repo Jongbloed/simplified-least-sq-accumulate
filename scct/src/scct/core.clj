@@ -46,13 +46,13 @@
         timestamp)))))
 
 
-(f/defsparkfn line-to-time-query-tuple2
+(f/defsparkfn line-to-query-time-tuple2
   [line]
   "returns a Spark tuple of the normalized query string and date time in msec from a csv record"
   (let [[fourth sixth] (fourth-and-sixth-csv line)]
     (ft/tuple
-      (parse-time-str-mb-long sixth)
-      (normalize-query-str fourth))))
+      (normalize-query-str fourth)
+      (parse-time-str-mb-long sixth))))
 
 (f/defsparkfn flip-tuple
   [tuple2]
@@ -88,20 +88,23 @@
                  querycount_time_tuples]
             (/
               (/ (+ new_visitors2 new_visitors1) 2)
-              (- time2 time1))))
+              (let [dt (- time2 time1)]
+                (if (zero? dt) 1 ;avoid DivideByZero in the rare case that ALL the entries of a query were with the exact same timestamp
+                  dt)))))
 
         (partition 2 1
           ((fn filter-and-count-duplicates
             [remaining-values]
             (lazy-seq
               (if (empty? remaining-values)
-                '()
+                (sequence '())
                 (let [nextvalue (first remaining-values)
                       dupcount (count (take-while #(= % nextvalue) remaining-values))
                       pair [dupcount nextvalue]]
                   (cons pair
                     (if (= (inc dupcount) (count (take (inc dupcount) remaining-values)))
-                      (filter-and-count-duplicates (nthnext remaining-values dupcount))'()))))))
+                      (filter-and-count-duplicates (nthnext remaining-values dupcount))
+                      (sequence '())))))))
            (iterable-seq absolute_t)))))))
 
 (def means-and-coords-to-least-sq-slope ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
@@ -113,7 +116,8 @@
             denominatorpartials (map #(squared (- (% :x) X_)) gridpoints)
             numerator (reduce + numeratorpartials)
             denominator (reduce + denominatorpartials)
-            slope (/ numerator denominator)]
+            slope (if (zero? denominator) 0
+                    (/ numerator denominator))]
         (ft/tuple slope query))))) ; (query, slope)
 
 (def c
@@ -128,116 +132,93 @@
 (defn -main []
   (f/with-context sc c
     (let
-      [date-query-ordered
-        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv")
-            (f/map-to-pair line-to-time-query-tuple2) ; (query date, query)
-            (f/filter (ft/key-val-fn (f/fn [timestamp query] timestamp))) ; filter out nil timestamp
-            f/sort-by-key ; (query date sorted, query)
+      [distinct-query-and-coords
+        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv.sample")
+            (f/map-to-pair line-to-query-time-tuple2) ; (query, timestamp)
+            (f/filter (ft/key-val-fn (f/fn [query timestamp] (not (nil? timestamp))))) ; filter out unparsable date values (and CSV header ;)
+            (f/partition-by (f/hash-partitioner 4)) ;ensure groups can be reduced in one go
+            f/group-by-key
+            (f/map-values (f/fn [timestamps] (seq (sort (iterable-seq timestamps))))) ; times should be in chronological order now
+            (f/map-values compute-hits-over-time-n) ; (query, ((X1, Y1), (X2, Y2)...(Xn, Yn)))
             f/cache)
 
-       distinct-query-and-meanX
-        (-> date-query-ordered
-            f/values ;(query)
-            (f/map-to-pair (f/fn [key] (ft/tuple key 1))) ;(query, 1)
-            (f/reduce-by-key (f/fn [_ __] (+ _ __))) ;(query, count)
-            (f/filter (f/fn [tuple] (> (second (f/untuple tuple)) 2))) ;eliminate queries with too few data points
-            (f/map-values (f/fn [count] (/ (- count 2) 2))) ;after taking differences, number of data points will be one less, and also x will start at 0
+       distinct-query-and-means
+        (-> distinct-query-and-coords
+            (f/map-to-pair
+              (ft/key-val-fn
+               (f/fn
+                [query coords]
+                (let [yvalues (map (ft/key-val-fn (f/fn [x y] y )) coords)
+                      numdatapoints (count yvalues)
+                      sumY (reduce + yvalues)]
+                  (ft/tuple query (ft/tuple sumY numdatapoints))))))
+            (f/filter (ft/key-val-val-fn (f/fn [query sumY n] (> n 0)))) ; it does happen that only some entries with same timestamp have been found
+            (f/map-to-pair                                               ; in which case we still can't calculate change in frequency
+              (ft/key-val-val-fn
+               (f/fn
+                [query sumY n]
+                (ft/tuple
+                  query
+                  (ft/tuple
+                    (/ (dec n) 2)   ; meanX = (n-1) / 2
+                    (/ sumY n)))))) ; meanY = S(y) / n
             f/cache)
-             ;(query, meanX) where count >=3
-       query-Y-and-meanX
-        (-> date-query-ordered ; (timestamp, query) ordered by timestamp
-            (f/map-to-pair flip-tuple) ; (query, timestamp) ordered by timestamp
-            (f/join distinct-query-and-meanX); join distinct queries with enough data points (query, count) to
-            (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
-            f/cache)
-                ; (query, (Y, meanX))
-       distinct-queries-and-XY
-        (-> date-query-ordered
-            (f/map-to-pair flip-tuple)
-            (f/join distinct-query-and-meanX) ;filter out <3 data point entries
-            (f/map-to-pair (ft/key-val-val-fn (f/fn [query date meanX] (ft/tuple query date)))) ; forget about meanX for now
-            f/group-by-key
-            (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
-            (f/map-values compute-hits-over-time-n) ; (query, ((X1, Y1), (X2, Y2)...(Xn, Yn)))
+
+        slope-query
+        (-> distinct-query-and-means
+            (f/join distinct-query-and-coords)
+            (f/map-to-pair means-and-coords-to-least-sq-slope)
             f/cache)]
 
-;       distinct-query-and-meanY
- ;       (-> distinct-queries-and-XY
-  ;          (f/map-to-pair
-   ;           (ft/key-val-fn
-    ;           (f/fn
-     ;           [query coords]
-      ;          (let [yvalues (map #(second (f/untuple %)) (iterable-seq coords))
-       ;               numdatapoints (count yvalues)
-        ;              sumY (reduce + yvalues)
-         ;         (ft/tuple query (/ sumY numdatapoints)); (query, meanY)
-          ;  f/cache)
+      (let [ascending
+              (fn [kv1 kv2]
+                (let [[a1 _] (f/untuple kv1)
+                      [a2 _] (f/untuple kv2)]
+                  (- a1 a2)))
+            descending
+              (fn [kv1 kv2]
+                (let [[a1 _] (f/untuple kv1)
+                      [a2 _] (f/untuple kv2)]
+                  (- a2 a1)))
+            describe-msec
+              (fn [msec]
+                (let [oneday (* 1000 60 60 24)
+                      onehour (/ oneday 24)
+                      oneminute (/ onehour 60)
+                      days (int (/ msec oneday))
+                      hours (int (/ (- msec (* days oneday)) onehour))
+                      minutes (int (/ (- msec (* days oneday) (* hours onehour)) oneminute))]
+                  (str (if (pos? days) (str days " days, ") "")
+                       (if (pos? hours) (str hours " hours and ") "")
+                       (if (pos? hours) (str minutes " minutes ") ""))))
+            explain
+              (fn [kv]
+                (let [[hits-per-msec_dx query] (f/untuple kv)
+                      word (if (neg? hits-per-msec_dx) "declining" "increasing")]
+                  (str "                  Search string: [" query
+                       "]\r\n  dU/dt² in Change in interest over msec²: [" (double hits-per-msec_dx)
+                       "]\r\n    Explanation: The average number of users per millisecond that search for \"" query
+                       "\"appears to be " word " by 1 every " (describe-msec (abs (/ 1 hits-per-msec_dx query)))
+                       "\r\n\r\n")))
 
-;       distinct-query-and-meanXmeanY-and-XY
- ;       (-> distinct-query-and-meanX ;(query, meanX)
-  ;          (f/join distinct-query-and-meanY) ;(query, (meanX, meanY))
-   ;         (f/join distinct-queries-and-XY) ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
-    ;        f/cache)
+            top-ten
+              (-> slope-query
+                  (f/filter (ft/key-val-fn (f/fn [slope _] (> slope 0))))
+                  (f/take-ordered 10 descending)
+                  f/collect)
 
-;       distinct-slope-and-query
- ;       (-> distinct-query-and-meanXmeanY-and-XY
-  ;          (f/map-to-pair means-and-coords-to-least-sq-slope)
-   ;         f/cache)]
+            bottom-ten
+              (-> slope-query
+                  (f/filter (ft/key-val-fn (f/fn [slope _] (< slope 0))))
+                  (f/take-ordered 10 ascending
+                   f/collect))]
 
-;      (let [ascending
- ;             (fn [kv1 kv2]
-  ;              (let [[n1 _] (f/untuple kv1)
-   ;                   [n2 _] (f/untuple kv2)
-    ;              (- n1 n2)
-     ;       descending
-      ;        (fn [kv1 kv2]
-       ;         (let [[n1 _] (f/untuple kv1)
-        ;              [n2 _] (f/untuple kv2)
-         ;         (- n2 n1)
-          ;  describe-msec
-           ;   (fn [msec]
-            ;    (let [oneday (* 1000 60 60 24)
-             ;         onehour (/ oneday 24)
-              ;        oneminute (/ onehour 60)
-               ;       days (int (/ msec oneday))
-                ;      hours (int (/ (- msec (* days oneday)) onehour))
-                 ;     minutes (int (/ (- msec (* days oneday) (* hours onehour)) oneminute))
-                  ;(str (if (pos? days) (str days " days, ") "")
-                   ;    (if (pos? hours) (str hours " hours and ") "")
-                    ;   (if (pos? hours) (str minutes " minutes ") "")
-;            explain
- ;             (fn [kv]
-  ;              (let [[msec_n query] (f/untuple kv)
-   ;                   word (if (neg? msec_n) "less" "longer")
-    ;              (str "                  Search string: [" query
-     ;                  "]\r\n  ddt/dx in Milliseconds over N: [" (double msec_n)
-      ;                 "]\r\n                    Explanation: Every time someone searches for \"" query
-       ;                "\", it will statistically take " (describe-msec (abs msec_n)) word
-        ;               " for the next person to search for it\r\n\r\n"
-;
- ;           top-ten
-  ;            (-> distinct-slope-and-query
-   ;               (f/filter (ft/key-val-fn (f/fn [slope _] (< slope 0))))
-    ;              f/cache
-     ;             (f/take-ordered 10 ascending)
-;
- ;           bottom-ten
-  ;            (-> distinct-slope-and-query
-   ;               (f/filter (ft/key-val-fn (f/fn [slope _] (> slope 0))))
-    ;              f/cache
-     ;             (f/take-ordered 10 descending))
-; todo: direct index koppelen om aan te ordenen ipv timestamp?
-; niet dt op de y as maar 1/dt, en als dt 0 is neem je gewoon x+1/dt ipv de vorige entry (nog een persoon op zelfde ijdstip = 2 per tijdseenheid)
-        ;(spit "result1.txt")]
-         ; (str "Top 10 fastest growing searches:\r\n\r\n"))]
-        ;       (apply str (map explain top-ten))))]
-       ;        "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n\r\n"))]
-      ;         (apply str (map explain bottom-ten))))]
+        (spit "resultaat.txt"
+          (str "Top 10 fastest growing searches:\r\n\r\n"
+               (apply str (map explain top-ten))
+               "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n\r\n"
+               (apply str (map explain bottom-ten)))))
 
-;      (save-rdd! date-query-ordered)
-      (save-rdd! distinct-query-and-meanX)
-      (save-rdd! query-Y-and-meanX)
-   ;   (save-rdd! distinct-query-and-meanY)
-      (save-rdd! distinct-queries-and-XY))))
-     ; (save-rdd! distinct-query-and-meanXmeanY-and-XY)
-      ;(save-rdd! distinct-slope-and-query))))
+      (save-rdd! distinct-query-and-coords)
+      (save-rdd! distinct-query-and-means)
+      (save-rdd! slope-query))))
