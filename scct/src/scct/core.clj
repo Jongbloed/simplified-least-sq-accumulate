@@ -77,12 +77,31 @@
   ;"Takes a Scala iterable s, and returns a lazy-seq of its contents."
   (iter-seq (.iterator s)))
 
-(f/defsparkfn timestamp-entries-to-xy-tuple
-  [iterable]
-  (seq
-    (map-indexed #(ft/tuple %1 %2)
-      (map #(- (second %) (first %))
-        (partition 2 1 (iterable-seq iterable))))))
+(f/defsparkfn compute-hits-over-time-n
+  [absolute_t]
+  (map-indexed #(ft/tuple %1 %2)
+    (map
+      (fn hits-over-time [querycount_time_tuples]
+        (let [ [[new_visitors1 time1]
+                [new_visitors2 time2]]
+               querycount_time_tuples]
+          (/
+            (/ (+ new_visitors2 new_visitors1) 2)
+            (- time2 time1))))
+
+      (partition 2 1
+        ((fn filter-and-count-duplicates
+          [remaining-values]
+          (lazy-seq
+            (if (empty? remaining-values)
+              '()
+              (let [nextvalue (first remaining-values)
+                    dupcount (count (take-while #(= % nextvalue) remaining-values))
+                    pair [dupcount nextvalue]]
+                (cons pair
+                  (if (= (inc dupcount) (count (take (inc dupcount) remaining-values)))
+                    (filter-and-count-duplicates (nthnext remaining-values dupcount))'()))))))
+         (iterable-seq absolute_t))))))
 
 (def means-and-coords-to-least-sq-slope ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
   (ft/key-val-val-fn
@@ -138,7 +157,7 @@
             (f/map-to-pair (ft/key-val-val-fn (f/fn [query date meanX] (ft/tuple query date)))) ; forget about meanX for now
             f/group-by-key
             (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
-            (f/map-values timestamp-entries-to-xy-tuple) ; (query, ((X1, Y1), (X2, Y2)...(Xn, Yn)))
+            (f/map-values compute-hits-over-time-n) ; (query, ((X1, Y1), (X2, Y2)...(Xn, Yn)))
             f/cache)
 
        distinct-query-and-meanY
@@ -212,7 +231,7 @@
           (str "Top 10 fastest growing searches:\r\n\r\n"
                (apply str (map explain top-ten))
                "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n\r\n"
-               (apply str (map explain bottom-ten))))))))
+               (apply str (map explain bottom-ten)))))
 
 ;      (save-rdd! date-query-ordered)
  ;     (save-rdd! distinct-query-and-meanX)
@@ -220,4 +239,4 @@
    ;   (save-rdd! distinct-query-and-meanY)
     ;  (save-rdd! distinct-queries-and-XY)
      ; (save-rdd! distinct-query-and-meanXmeanY-and-XY)
-      ;(save-rdd! distinct-slope-and-query))))
+      (save-rdd! distinct-slope-and-query))))
