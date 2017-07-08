@@ -198,20 +198,18 @@
                   (str "                  Search string: [" query
                        "]\r\n  dU/dt² in Change in interest over msec²: [" (double hits-per-msec_dx)
                        "]\r\n    Explanation: The average number of users per millisecond that search for \"" query
-                       "\"appears to be " word " by 1 every " (describe-msec (abs (/ 1 hits-per-msec_dx query)))
+                       "\"appears to be " word " by 1 every " (describe-msec (abs (/ 1 hits-per-msec_dx)))
                        "\r\n\r\n")))
 
             top-ten
               (-> slope-query
                   (f/filter (ft/key-val-fn (f/fn [slope _] (> slope 0))))
-                  (f/take-ordered 10 descending)
-                  f/collect)
+                  (f/take-ordered 10 descending))
 
             bottom-ten
               (-> slope-query
                   (f/filter (ft/key-val-fn (f/fn [slope _] (< slope 0))))
-                  (f/take-ordered 10 ascending
-                   f/collect))]
+                  (f/take-ordered 10 ascending))]
 
         (spit "resultaat.txt"
           (str "Top 10 fastest growing searches:\r\n\r\n"
