@@ -79,29 +79,30 @@
 
 (f/defsparkfn compute-hits-over-time-n
   [absolute_t]
-  (map-indexed #(ft/tuple %1 %2)
-    (map
-      (fn hits-over-time [querycount_time_tuples]
-        (let [ [[new_visitors1 time1]
-                [new_visitors2 time2]]
-               querycount_time_tuples]
-          (/
-            (/ (+ new_visitors2 new_visitors1) 2)
-            (- time2 time1))))
+  (seq
+    (map-indexed #(ft/tuple %1 %2)
+      (map
+        (fn hits-over-time [querycount_time_tuples]
+          (let [ [[new_visitors1 time1]
+                  [new_visitors2 time2]]
+                 querycount_time_tuples]
+            (/
+              (/ (+ new_visitors2 new_visitors1) 2)
+              (- time2 time1))))
 
-      (partition 2 1
-        ((fn filter-and-count-duplicates
-          [remaining-values]
-          (lazy-seq
-            (if (empty? remaining-values)
-              '()
-              (let [nextvalue (first remaining-values)
-                    dupcount (count (take-while #(= % nextvalue) remaining-values))
-                    pair [dupcount nextvalue]]
-                (cons pair
-                  (if (= (inc dupcount) (count (take (inc dupcount) remaining-values)))
-                    (filter-and-count-duplicates (nthnext remaining-values dupcount))'()))))))
-         (iterable-seq absolute_t))))))
+        (partition 2 1
+          ((fn filter-and-count-duplicates
+            [remaining-values]
+            (lazy-seq
+              (if (empty? remaining-values)
+                '()
+                (let [nextvalue (first remaining-values)
+                      dupcount (count (take-while #(= % nextvalue) remaining-values))
+                      pair [dupcount nextvalue]]
+                  (cons pair
+                    (if (= (inc dupcount) (count (take (inc dupcount) remaining-values)))
+                      (filter-and-count-duplicates (nthnext remaining-values dupcount))'()))))))
+           (iterable-seq absolute_t)))))))
 
 (def means-and-coords-to-least-sq-slope ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
   (ft/key-val-val-fn
@@ -158,85 +159,85 @@
             f/group-by-key
             (f/partition-by (f/hash-partitioner (f/partition-count date-query-ordered)))
             (f/map-values compute-hits-over-time-n) ; (query, ((X1, Y1), (X2, Y2)...(Xn, Yn)))
-            f/cache)
-
-       distinct-query-and-meanY
-        (-> distinct-queries-and-XY
-            (f/map-to-pair
-              (ft/key-val-fn
-               (f/fn
-                [query coords]
-                (let [yvalues (map #(second (f/untuple %)) (iterable-seq coords))
-                      numdatapoints (count yvalues)
-                      sumY (reduce + yvalues)]
-                  (ft/tuple query (/ sumY numdatapoints)))))); (query, meanY)
-            f/cache)
-
-       distinct-query-and-meanXmeanY-and-XY
-        (-> distinct-query-and-meanX ;(query, meanX)
-            (f/join distinct-query-and-meanY) ;(query, (meanX, meanY))
-            (f/join distinct-queries-and-XY) ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
-            f/cache)
-
-       distinct-slope-and-query
-        (-> distinct-query-and-meanXmeanY-and-XY
-            (f/map-to-pair means-and-coords-to-least-sq-slope)
             f/cache)]
 
-      (let [ascending
-              (fn [kv1 kv2]
-                (let [[n1 _] (f/untuple kv1)
-                      [n2 _] (f/untuple kv2)]
-                  (- n1 n2)))
-            descending
-              (fn [kv1 kv2]
-                (let [[n1 _] (f/untuple kv1)
-                      [n2 _] (f/untuple kv2)]
-                  (- n2 n1)))
-            describe-msec
-              (fn [msec]
-                (let [oneday (* 1000 60 60 24)
-                      onehour (/ oneday 24)
-                      oneminute (/ onehour 60)
-                      days (int (/ msec oneday))
-                      hours (int (/ (- msec (* days oneday)) onehour))
-                      minutes (int (/ (- msec (* days oneday) (* hours onehour)) oneminute))]
-                  (str (if (pos? days) (str days " days, ") "")
-                       (if (pos? hours) (str hours " hours and ") "")
-                       (if (pos? hours) (str minutes " minutes ") ""))))
-            explain
-              (fn [kv]
-                (let [[msec_n query] (f/untuple kv)
-                      word (if (neg? msec_n) "less" "longer")]
-                  (str "                  Search string: [" query
-                       "]\r\n  ddt/dx in Milliseconds over N: [" (double msec_n)
-                       "]\r\n                    Explanation: Every time someone searches for \"" query
-                       "\", it will statistically take " (describe-msec (abs msec_n)) word
-                       " for the next person to search for it\r\n\r\n")))
+;       distinct-query-and-meanY
+ ;       (-> distinct-queries-and-XY
+  ;          (f/map-to-pair
+   ;           (ft/key-val-fn
+    ;           (f/fn
+     ;           [query coords]
+      ;          (let [yvalues (map #(second (f/untuple %)) (iterable-seq coords))
+       ;               numdatapoints (count yvalues)
+        ;              sumY (reduce + yvalues)
+         ;         (ft/tuple query (/ sumY numdatapoints)); (query, meanY)
+          ;  f/cache)
 
-            top-ten
-              (-> distinct-slope-and-query
-                  (f/filter (ft/key-val-fn (f/fn [slope _] (< slope 0))))
-                  f/cache
-                  (f/take-ordered 10 ascending))
+;       distinct-query-and-meanXmeanY-and-XY
+ ;       (-> distinct-query-and-meanX ;(query, meanX)
+  ;          (f/join distinct-query-and-meanY) ;(query, (meanX, meanY))
+   ;         (f/join distinct-queries-and-XY) ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
+    ;        f/cache)
 
-            bottom-ten
-              (-> distinct-slope-and-query
-                  (f/filter (ft/key-val-fn (f/fn [slope _] (> slope 0))))
-                  f/cache
-                  (f/take-ordered 10 descending))]
+;       distinct-slope-and-query
+ ;       (-> distinct-query-and-meanXmeanY-and-XY
+  ;          (f/map-to-pair means-and-coords-to-least-sq-slope)
+   ;         f/cache)]
+
+;      (let [ascending
+ ;             (fn [kv1 kv2]
+  ;              (let [[n1 _] (f/untuple kv1)
+   ;                   [n2 _] (f/untuple kv2)
+    ;              (- n1 n2)
+     ;       descending
+      ;        (fn [kv1 kv2]
+       ;         (let [[n1 _] (f/untuple kv1)
+        ;              [n2 _] (f/untuple kv2)
+         ;         (- n2 n1)
+          ;  describe-msec
+           ;   (fn [msec]
+            ;    (let [oneday (* 1000 60 60 24)
+             ;         onehour (/ oneday 24)
+              ;        oneminute (/ onehour 60)
+               ;       days (int (/ msec oneday))
+                ;      hours (int (/ (- msec (* days oneday)) onehour))
+                 ;     minutes (int (/ (- msec (* days oneday) (* hours onehour)) oneminute))
+                  ;(str (if (pos? days) (str days " days, ") "")
+                   ;    (if (pos? hours) (str hours " hours and ") "")
+                    ;   (if (pos? hours) (str minutes " minutes ") "")
+;            explain
+ ;             (fn [kv]
+  ;              (let [[msec_n query] (f/untuple kv)
+   ;                   word (if (neg? msec_n) "less" "longer")
+    ;              (str "                  Search string: [" query
+     ;                  "]\r\n  ddt/dx in Milliseconds over N: [" (double msec_n)
+      ;                 "]\r\n                    Explanation: Every time someone searches for \"" query
+       ;                "\", it will statistically take " (describe-msec (abs msec_n)) word
+        ;               " for the next person to search for it\r\n\r\n"
+;
+ ;           top-ten
+  ;            (-> distinct-slope-and-query
+   ;               (f/filter (ft/key-val-fn (f/fn [slope _] (< slope 0))))
+    ;              f/cache
+     ;             (f/take-ordered 10 ascending)
+;
+ ;           bottom-ten
+  ;            (-> distinct-slope-and-query
+   ;               (f/filter (ft/key-val-fn (f/fn [slope _] (> slope 0))))
+    ;              f/cache
+     ;             (f/take-ordered 10 descending))
 ; todo: direct index koppelen om aan te ordenen ipv timestamp?
 ; niet dt op de y as maar 1/dt, en als dt 0 is neem je gewoon x+1/dt ipv de vorige entry (nog een persoon op zelfde ijdstip = 2 per tijdseenheid)
-        (spit "result1.txt"
-          (str "Top 10 fastest growing searches:\r\n\r\n"
-               (apply str (map explain top-ten))
-               "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n\r\n"
-               (apply str (map explain bottom-ten)))))
+        ;(spit "result1.txt")]
+         ; (str "Top 10 fastest growing searches:\r\n\r\n"))]
+        ;       (apply str (map explain top-ten))))]
+       ;        "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n\r\n"))]
+      ;         (apply str (map explain bottom-ten))))]
 
 ;      (save-rdd! date-query-ordered)
- ;     (save-rdd! distinct-query-and-meanX)
-  ;    (save-rdd! query-Y-and-meanX)
+      (save-rdd! distinct-query-and-meanX)
+      (save-rdd! query-Y-and-meanX)
    ;   (save-rdd! distinct-query-and-meanY)
-    ;  (save-rdd! distinct-queries-and-XY)
+      (save-rdd! distinct-queries-and-XY))))
      ; (save-rdd! distinct-query-and-meanXmeanY-and-XY)
-      (save-rdd! distinct-slope-and-query))))
+      ;(save-rdd! distinct-slope-and-query))))
