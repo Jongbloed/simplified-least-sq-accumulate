@@ -54,19 +54,17 @@
       (normalize-query-str fourth)
       (parse-time-str-mb-long sixth))))
 
-(f/defsparkfn flip-tuple
-  [tuple2]
-  (let [kv (f/untuple tuple2)
-        k (first kv)
-        v (second kv)]
-    (ft/tuple v k)))
+(f/defsparkfn abs [x] (if (> x 0) x (- 0 x)))
 
-(f/defsparkfn squared [x] (* x x))
-(f/defsparkfn abs [x] (if (> x 0) x (- x)))
+(f/defsparkfn significant
+  [kv1 kv2]
+  (let [[a1 _] (f/untuple kv1)
+        [a2 _] (f/untuple kv2)]
+    (- (abs a1) (abs a2))))
 
 (f/defsparkfn iter-seq
   [iter]
-  ;"Takes a Scala iterable, and turns it into a lazy-seq"
+  "Takes a Scala iterable and turns it into a lazy-seq"
   (lazy-seq
     (when (.hasNext iter)
      (cons (.next iter)
@@ -74,8 +72,12 @@
 
 (f/defsparkfn iterable-seq
   [s]
-  ;"Takes a Scala iterable s, and returns a lazy-seq of its contents."
-  (iter-seq (.iterator s)))
+  "Takes a Scala iterable s, and returns a lazy-seq of its contents."
+  (do
+    (println (str "\r\n\r\n\r\n==" (class s) "==\r\n\r\n\r\n"))
+    (if (not= nil s)
+      (iter-seq (.iterator s))
+      (sequence '()))))
 
 (f/defsparkfn compute-hits-over-time-n
   [absolute_t]
@@ -105,20 +107,48 @@
                     (if (= (inc dupcount) (count (take (inc dupcount) remaining-values)))
                       (filter-and-count-duplicates (nthnext remaining-values dupcount))
                       (sequence '())))))))
-           (iterable-seq absolute_t)))))))
+           absolute_t))))))
 
-(def means-and-coords-to-least-sq-slope ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
-  (ft/key-val-val-fn
-    (f/fn [query means coords]
-      (let [[X_ Y_] (f/untuple means)
-            gridpoints (map #(let [[x y] (f/untuple %)] {:x x :y y}) (iterable-seq coords))
-            numeratorpartials (map #(* (- (% :x) X_) (- (% :y) Y_)) gridpoints)
-            denominatorpartials (map #(squared (- (% :x) X_)) gridpoints)
-            numerator (reduce + numeratorpartials)
-            denominator (reduce + denominatorpartials)
-            slope (if (zero? denominator) 0
-                    (/ numerator denominator))]
-        (ft/tuple slope query))))) ; (query, slope)
+(f/defsparkfn means-and-coords-to-least-sq-slope ;(query, ((meanX, meanY), ((X1, Y1), (X2, Y2)...(Xn, Yn)))
+  [kvv]
+  (let [[query means_coords] (f/untuple kvv)
+        [means coords] (f/untuple means_coords)
+        [X_ Y_] (f/untuple means)
+
+        gridpoints
+          (map
+           (ft/key-val-fn
+            (f/fn
+             [x y]
+             {:x x
+              :y y}))
+           coords)
+
+        numeratorpartials
+          (map
+            (f/fn
+             [point]
+             (* (- (point :x) X_)
+                (- (point :y) Y_)))
+            gridpoints)
+
+        denominatorpartials
+          (map
+            (f/fn
+             [point]
+             (* (- (point :x) X_)
+                (- (point :x) X_))
+             gridpoints))
+
+        numerator   (reduce + numeratorpartials)
+        denominator (reduce + denominatorpartials)
+
+        slope
+          (if (zero? denominator) 0
+            (/ numerator denominator))]
+
+      (ft/tuple slope query))) ; (slope, query)
+
 
 (def c
   (-> (conf/spark-conf)
@@ -133,7 +163,7 @@
   (f/with-context sc c
     (let
       [distinct-query-and-coords
-        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv.sample")
+        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv.sample2")
             (f/map-to-pair line-to-query-time-tuple2) ; (query, timestamp)
             (f/filter (ft/key-val-fn (f/fn [query timestamp] (not (nil? timestamp))))) ; filter out unparsable date values (and CSV header ;)
             (f/partition-by (f/hash-partitioner 4)) ;ensure groups can be reduced in one go
@@ -148,7 +178,7 @@
               (ft/key-val-fn
                (f/fn
                 [query coords]
-                (let [yvalues (map (ft/key-val-fn (f/fn [x y] y )) coords)
+                (let [yvalues (map (ft/key-val-fn (f/fn [x y] y )) (iterable-seq coords))
                       numdatapoints (count yvalues)
                       sumY (reduce + yvalues)]
                   (ft/tuple query (ft/tuple sumY numdatapoints))))))
@@ -170,17 +200,7 @@
             (f/map-to-pair means-and-coords-to-least-sq-slope)
             f/cache)]
 
-      (let [ascending
-              (fn [kv1 kv2]
-                (let [[a1 _] (f/untuple kv1)
-                      [a2 _] (f/untuple kv2)]
-                  (- a1 a2)))
-            descending
-              (fn [kv1 kv2]
-                (let [[a1 _] (f/untuple kv1)
-                      [a2 _] (f/untuple kv2)]
-                  (- a2 a1)))
-            describe-msec
+      (let [describe-msec
               (fn [msec]
                 (let [oneday (* 1000 60 60 24)
                       onehour (/ oneday 24)
@@ -195,28 +215,28 @@
               (fn [kv]
                 (let [[hits-per-msec_dx query] (f/untuple kv)
                       word (if (neg? hits-per-msec_dx) "declining" "increasing")]
-                  (str "                  Search string: [" query
-                       "]\r\n  dU/dt² in Change in interest over msec²: [" (double hits-per-msec_dx)
-                       "]\r\n    Explanation: The average number of users per millisecond that search for \"" query
-                       "\"appears to be " word " by 1 every " (describe-msec (abs (/ 1 hits-per-msec_dx)))
+                  (str "Search string: [" query
+                       "]\r\ndU/dt² in Change in interest over msec²: [" (double hits-per-msec_dx)
+                       "]\r\nExplanation: The average number of users per millisecond that search for \"" query
+                       "\"\r\nappears to be " word " by 1 every " (describe-msec (abs (/ 1.0 (double hits-per-msec_dx))))
                        "\r\n\r\n")))
 
             top-ten
               (-> slope-query
                   (f/filter (ft/key-val-fn (f/fn [slope _] (> slope 0))))
-                  (f/take-ordered 10 descending))
+                  (f/take-ordered 10 significant))
 
             bottom-ten
               (-> slope-query
                   (f/filter (ft/key-val-fn (f/fn [slope _] (< slope 0))))
-                  (f/take-ordered 10 ascending))]
+                  (f/take-ordered 10 significant))]
 
         (spit "resultaat.txt"
           (str "Top 10 fastest growing searches:\r\n\r\n"
                (apply str (map explain top-ten))
                "\r\n\r\n\r\n\r\nTop 10 fastest declining searches:\r\n\r\n"
-               (apply str (map explain bottom-ten)))))
+               (apply str (map explain bottom-ten))))))))
 
-      (save-rdd! distinct-query-and-coords)
-      (save-rdd! distinct-query-and-means)
-      (save-rdd! slope-query))))
+      ;(save-rdd! distinct-query-and-coords)
+      ;(save-rdd! distinct-query-and-means)
+      ;(save-rdd! slope-query))))

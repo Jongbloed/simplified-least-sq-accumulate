@@ -1,0 +1,108 @@
+Top 10 fastest growing searches:
+
+Search string: [joe jonas]
+dU/dt² in Change in interest over msec²: [7.788331670481892E-10]
+Explanation: The average number of users per millisecond that search for "joe jonas"
+appears to be increasing by 1 every 14 days, 20 hours and 39 minutes 
+
+Search string: [50 inch tv]
+dU/dt² in Change in interest over msec²: [8.556711266939881E-11]
+Explanation: The average number of users per millisecond that search for "50 inch tv"
+appears to be increasing by 1 every 135 days, 6 hours and 18 minutes 
+
+Search string: [cmos battery]
+dU/dt² in Change in interest over msec²: [5.913774246922875E-10]
+Explanation: The average number of users per millisecond that search for "cmos battery"
+appears to be increasing by 1 every 19 days, 13 hours and 42 minutes 
+
+Search string: [tough]
+dU/dt² in Change in interest over msec²: [1.636875282397817E-9]
+Explanation: The average number of users per millisecond that search for "tough"
+appears to be increasing by 1 every 7 days, 1 hours and 42 minutes 
+
+Search string: [snatch]
+dU/dt² in Change in interest over msec²: [7.985324731934132E-10]
+Explanation: The average number of users per millisecond that search for "snatch"
+appears to be increasing by 1 every 14 days, 11 hours and 51 minutes 
+
+Search string: [volume control]
+dU/dt² in Change in interest over msec²: [5.288019151320634E-9]
+Explanation: The average number of users per millisecond that search for "volume control"
+appears to be increasing by 1 every 2 days, 4 hours and 31 minutes 
+
+Search string: [sharp aquos]
+dU/dt² in Change in interest over msec²: [1.182662531974875E-7]
+Explanation: The average number of users per millisecond that search for "sharp aquos"
+appears to be increasing by 1 every 2 hours and 20 minutes 
+
+Search string: [phillips]
+dU/dt² in Change in interest over msec²: [7.692177018871323E-7]
+Explanation: The average number of users per millisecond that search for "phillips"
+appears to be increasing by 1 every 
+
+Search string: [viore]
+dU/dt² in Change in interest over msec²: [3.12321466379511E-10]
+Explanation: The average number of users per millisecond that search for "viore"
+appears to be increasing by 1 every 37 days, 1 hours and 23 minutes 
+
+Search string: [hp notebook]
+dU/dt² in Change in interest over msec²: [1.024130481339318E-7]
+Explanation: The average number of users per millisecond that search for "hp notebook"
+appears to be increasing by 1 every 2 hours and 42 minutes 
+
+
+
+
+
+Top 10 fastest declining searches:
+
+Search string: [hp touch pad case]
+dU/dt² in Change in interest over msec²: [-4.630078446235655E-9]
+Explanation: The average number of users per millisecond that search for "hp touch pad case"
+appears to be declining by 1 every 2 days, 11 hours and 59 minutes 
+
+Search string: [dell mini]
+dU/dt² in Change in interest over msec²: [-2.766491869688028E-9]
+Explanation: The average number of users per millisecond that search for "dell mini"
+appears to be declining by 1 every 4 days, 4 hours and 24 minutes 
+
+Search string: [samsung french door]
+dU/dt² in Change in interest over msec²: [-5.548305821686825E-8]
+Explanation: The average number of users per millisecond that search for "samsung french door"
+appears to be declining by 1 every 5 hours and 0 minutes 
+
+Search string: [dell tower]
+dU/dt² in Change in interest over msec²: [-3.414422706548E-10]
+Explanation: The average number of users per millisecond that search for "dell tower"
+appears to be declining by 1 every 33 days, 21 hours and 32 minutes 
+
+Search string: [sony handycam]
+dU/dt² in Change in interest over msec²: [-4.573161484625646E-10]
+Explanation: The average number of users per millisecond that search for "sony handycam"
+appears to be declining by 1 every 25 days, 7 hours and 24 minutes 
+
+Search string: [stevie nicks]
+dU/dt² in Change in interest over msec²: [-3.371175398184005E-10]
+Explanation: The average number of users per millisecond that search for "stevie nicks"
+appears to be declining by 1 every 34 days, 7 hours and 58 minutes 
+
+Search string: [sony bravia]
+dU/dt² in Change in interest over msec²: [-8.054314916603176E-9]
+Explanation: The average number of users per millisecond that search for "sony bravia"
+appears to be declining by 1 every 1 days, 10 hours and 29 minutes 
+
+Search string: [dead man]
+dU/dt² in Change in interest over msec²: [-4.358554502580216E-9]
+Explanation: The average number of users per millisecond that search for "dead man"
+appears to be declining by 1 every 2 days, 15 hours and 43 minutes 
+
+Search string: [strdh520]
+dU/dt² in Change in interest over msec²: [-2.212862881457325E-9]
+Explanation: The average number of users per millisecond that search for "strdh520"
+appears to be declining by 1 every 5 days, 5 hours and 31 minutes 
+
+Search string: [eee transformer]
+dU/dt² in Change in interest over msec²: [-3.949643812511647E-10]
+Explanation: The average number of users per millisecond that search for "eee transformer"
+appears to be declining by 1 every 29 days, 7 hours and 17 minutes 
+
