@@ -42,7 +42,7 @@
     (if (nil? timestamp) nil
       (t/in-millis
        (t/interval
-        (t/date-time 0)
+        (t/date-time 1970 1 1)
         timestamp)))))
 
 
@@ -80,20 +80,20 @@
 (f/defsparkfn compute-hits-over-time-n
   [absolute_t]
   (seq
-    (map-indexed #(ft/tuple %1 %2)
+    (map-indexed (f/fn [k v] (ft/tuple k v))
       (map
-        (fn hits-over-time [querycount_time_tuples]
+        (f/fn hits-over-time [querycount_time_tuples]
           (let [ [[new_visitors1 time1]
                   [new_visitors2 time2]]
                  querycount_time_tuples]
             (/
-              (/ (+ new_visitors2 new_visitors1) 2)
-              (let [dt (- time2 time1)]
+              (* 1000000000(/ (+ new_visitors2 new_visitors1) 2)) ;without multiplying by a big number here, the ordering is off, probably an overflow thing
+              (let [dt (-  time2 time1)]
                 (if (zero? dt) 1 ;avoid DivideByZero in the rare case that ALL the entries of a query were with the exact same timestamp
                   dt)))))
 
         (partition 2 1
-          ((fn filter-and-count-duplicates
+          ((f/fn filter-and-count-duplicates
             [remaining-values]
             (lazy-seq
               (if (empty? remaining-values)
@@ -111,11 +111,11 @@
   (ft/key-val-val-fn
     (f/fn [query means coords]
       (let [[X_ Y_] (f/untuple means)
-            gridpoints (map #(let [[x y] (f/untuple %)] {:x x :y y}) (iterable-seq coords))
-            numeratorpartials (map #(* (- (% :x) X_) (- (% :y) Y_)) gridpoints)
-            denominatorpartials (map #(squared (- (% :x) X_)) gridpoints)
-            numerator (reduce + numeratorpartials)
-            denominator (reduce + denominatorpartials)
+            gridpoints (map (f/fn [x_y](let [[x y] (f/untuple x_y)] {:x x :y y})) (iterable-seq coords))
+            numeratorpartials (map (f/fn [point](* (- (point :x) X_) (- (point :y) Y_))) gridpoints)
+            denominatorpartials (map (f/fn [point](squared (- (point :x) X_))) gridpoints)
+            numerator (reduce (f/fn [_ __] (+ _ __)) numeratorpartials)
+            denominator (reduce (f/fn [_ __] (+ _ __)) denominatorpartials)
             slope (if (zero? denominator) 0
                     (/ numerator denominator))]
         (ft/tuple slope query))))) ; (query, slope)
@@ -133,7 +133,7 @@
   (f/with-context sc c
     (let
       [distinct-query-and-coords
-        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv.sample")
+        (-> (f/text-file sc "resources/kaggle_geo - Erik .csv.sample2")
             (f/map-to-pair line-to-query-time-tuple2) ; (query, timestamp)
             (f/filter (ft/key-val-fn (f/fn [query timestamp] (not (nil? timestamp))))) ; filter out unparsable date values (and CSV header ;)
             (f/partition-by (f/hash-partitioner 4)) ;ensure groups can be reduced in one go
@@ -196,7 +196,7 @@
                 (let [[hits-per-msec_dx query] (f/untuple kv)
                       word (if (neg? hits-per-msec_dx) "declining" "increasing")]
                   (str "                  Search string: [" query
-                       "]\r\n  dU/dt² in Change in interest over msec²: [" (double hits-per-msec_dx)
+                       "]\r\n  dU/dt² in Change in interest over msec²: [" hits-per-msec_dx
                        "]\r\n    Explanation: The average number of users per millisecond that search for \"" query
                        "\"appears to be " word " by 1 every " (describe-msec (abs (/ 1 hits-per-msec_dx)))
                        "\r\n\r\n")))

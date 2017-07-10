@@ -1,12 +1,88 @@
 Top 10 fastest growing searches:
 
+                  Search string: [air conditioner]
+  dU/dt² in Change in interest over msec²: [121672473125000000/82928768835327]
+    Explanation: The average number of users per millisecond that search for "air conditioner"appears to be increasing by 1 every 
+
+                  Search string: [vacuum]
+  dU/dt² in Change in interest over msec²: [84260637620000000/124087079401559]
+    Explanation: The average number of users per millisecond that search for "vacuum"appears to be increasing by 1 every 
+
+                  Search string: [kinect]
+  dU/dt² in Change in interest over msec²: [9274736781250000/113348108487341]
+    Explanation: The average number of users per millisecond that search for "kinect"appears to be increasing by 1 every 
+
+                  Search string: [sons of anarchy season 3]
+  dU/dt² in Change in interest over msec²: [10633357668061376935312190000000/159480617457011093905782933351]
+    Explanation: The average number of users per millisecond that search for "sons of anarchy season 3"appears to be increasing by 1 every 
+
+                  Search string: [onlinemidnightsale_home_theater]
+  dU/dt² in Change in interest over msec²: [710211775000000/10854841469727]
+    Explanation: The average number of users per millisecond that search for "onlinemidnightsale_home_theater"appears to be increasing by 1 every 
+
+                  Search string: [i7]
+  dU/dt² in Change in interest over msec²: [264301949500000000/4175646542799991]
+    Explanation: The average number of users per millisecond that search for "i7"appears to be increasing by 1 every 
+
+                  Search string: [dead island]
+  dU/dt² in Change in interest over msec²: [1253976948170921742491200000/25607464234993615921761321]
+    Explanation: The average number of users per millisecond that search for "dead island"appears to be increasing by 1 every 
+
+                  Search string: [webcam]
+  dU/dt² in Change in interest over msec²: [19184031782475902611597770000000/423680701384226455611006974143]
+    Explanation: The average number of users per millisecond that search for "webcam"appears to be increasing by 1 every 
+
+                  Search string: [star wars]
+  dU/dt² in Change in interest over msec²: [11364298835153675177321252918349506943105468750/263016758107823430406621899486012196497773483]
+    Explanation: The average number of users per millisecond that search for "star wars"appears to be increasing by 1 every 
+
+                  Search string: [thrive]
+  dU/dt² in Change in interest over msec²: [2344776728499328546262493750000/55790470307394742917091946957]
+    Explanation: The average number of users per millisecond that search for "thrive"appears to be increasing by 1 every 
+
 
 
 
 
 Top 10 fastest declining searches:
 
+                  Search string: [onlinemidnightsale_hometheater_20110825]
+  dU/dt² in Change in interest over msec²: [-26626408000000000/10922532364179]
+    Explanation: The average number of users per millisecond that search for "onlinemidnightsale_hometheater_20110825"appears to be declining by 1 every 
+
+                  Search string: [paramore]
+  dU/dt² in Change in interest over msec²: [-15496074950000000/10347559340511]
+    Explanation: The average number of users per millisecond that search for "paramore"appears to be declining by 1 every 
+
+                  Search string: [dvd rw]
+  dU/dt² in Change in interest over msec²: [-117341550000000/104128200281]
+    Explanation: The average number of users per millisecond that search for "dvd rw"appears to be declining by 1 every 
+
+                  Search string: [dvd r]
+  dU/dt² in Change in interest over msec²: [-58609250000000/133611978459]
+    Explanation: The average number of users per millisecond that search for "dvd r"appears to be declining by 1 every 
+
+                  Search string: [laborday_hometheater_20110902]
+  dU/dt² in Change in interest over msec²: [-5418583482067765729925000000/19246435299726318869107053]
+    Explanation: The average number of users per millisecond that search for "laborday_hometheater_20110902"appears to be declining by 1 every 
+
                   Search string: [hp touchpad]
-  dU/dt² in Change in interest over msec²: [-3.488318706572149E-9]
-    Explanation: The average number of users per millisecond that search for "hp touchpad"appears to be declining by 1 every 3 days, 7 hours and 37 minutes 
+  dU/dt² in Change in interest over msec²: [-539593776727480870052080632911868795541887252440975235980027798832133593975158701723528706301391925515403682233185267188636554385974302906747387139545568697877836560078021645296355756301365785800305977287740870566086155336285156781228610619153885628827030721090131306879228585362693372749055137899416811841578649473479843998406887710891652495460634913777186972584562500/2499260076372003804848641126009234373216711832437515654776525774443171075361414115322577077673942573908640581866391065330445108770908474308304547122002696919984297019855937975086355585190214138825752149086739633042699124858283069545374648457851113303201658781417665378214060987418295280962608962218698894946972279090353910655753639728856966726828954859134776472071277]
+    Explanation: The average number of users per millisecond that search for "hp touchpad"appears to be declining by 1 every 
+
+                  Search string: [carter 4]
+  dU/dt² in Change in interest over msec²: [-7997540750000000/40084345112237]
+    Explanation: The average number of users per millisecond that search for "carter 4"appears to be declining by 1 every 
+
+                  Search string: [on star]
+  dU/dt² in Change in interest over msec²: [-2463513487431448189973402500000/12668964935694923919922475619]
+    Explanation: The average number of users per millisecond that search for "on star"appears to be declining by 1 every 
+
+                  Search string: [micro sd]
+  dU/dt² in Change in interest over msec²: [-128500406750000000/704842846554169]
+    Explanation: The average number of users per millisecond that search for "micro sd"appears to be declining by 1 every 
+
+                  Search string: [virgin mobile]
+  dU/dt² in Change in interest over msec²: [-5144126613844756931618151484363449938750000000/34854789320280858706521800558449329911080629]
+    Explanation: The average number of users per millisecond that search for "virgin mobile"appears to be declining by 1 every 
 
