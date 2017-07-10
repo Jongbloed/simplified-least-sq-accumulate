@@ -190,15 +190,15 @@
                       minutes (int (/ (- msec (* days oneday) (* hours onehour)) oneminute))]
                   (str (if (pos? days) (str days " days, ") "")
                        (if (pos? hours) (str hours " hours and ") "")
-                       (if (pos? hours) (str minutes " minutes ") ""))))
+                       (if (pos? minutes) (str minutes " minutes ") ""))))
             explain
               (fn [kv]
                 (let [[hits-per-msec_dx query] (f/untuple kv)
                       word (if (neg? hits-per-msec_dx) "declining" "increasing")]
                   (str "                  Search string: [" query
-                       "]\r\n  dU/dt² in Change in interest over msec²: [" hits-per-msec_dx
+                       "]\r\n  dU/dt² in Change in interest over msec²: [" (double (/ hits-per-msec_dx 1000000000))
                        "]\r\n    Explanation: The average number of users per millisecond that search for \"" query
-                       "\"appears to be " word " by 1 every " (describe-msec (abs (/ 1 hits-per-msec_dx)))
+                       "\"appears to be " word " by 1 every " (describe-msec (abs (/ 1000000000 hits-per-msec_dx)))
                        "\r\n\r\n")))
 
             top-ten
